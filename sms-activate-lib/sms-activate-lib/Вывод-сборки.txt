@@ -1,0 +1,3 @@
+﻿------ Сборка начата: проект: sms-activate-lib, Конфигурация: Debug Any CPU ------
+  sms-activate-lib -> C:\C-sharp-Project\sms-activate-lib\sms-activate-lib\sms-activate-lib\bin\Debug\sms-activate-lib.dll
+========== Сборка: успешно: 1, с ошибками: 0, без изменений: 0, пропущено: 0 ==========

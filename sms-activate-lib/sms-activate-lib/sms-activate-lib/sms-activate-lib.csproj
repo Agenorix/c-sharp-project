@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Global">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\Global.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -37,6 +43,18 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZennoLab.CommandCenter">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\ZennoLab.CommandCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="ZennoLab.Emulation">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\ZennoLab.Emulation.dll</HintPath>
+    </Reference>
+    <Reference Include="ZennoLab.InterfacesLibrary">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\ZennoLab.InterfacesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ZennoLab.Macros">
+      <HintPath>..\..\..\..\Program Files (x86)\ZennoLab\ZennoPoster Pro\Progs\ZennoLab.Macros.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
