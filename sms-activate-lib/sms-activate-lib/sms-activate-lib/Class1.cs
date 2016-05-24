@@ -22,7 +22,8 @@ namespace sms_activate_lib
         {
            string Balance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + 
                "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            return Balance;
+            string balbal = System.Text.RegularExpressions.Regex.Replace(Balance, @".*?:", "");
+            return balbal;
 
         }
     }
