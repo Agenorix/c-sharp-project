@@ -79,7 +79,15 @@ namespace sms_activate_lib
                 + "&forward=" + Forward
                 + "&operator=" + Operator
                 , Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            return getnumber;
+
+             //Получаем номер
+            string sms_activate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
+
+            //Получаем id
+            string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
+            string sms_activate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+            return sms_activate_number;
         }
           
         //Получаем номер сервиса sms-activate.ru
