@@ -20,6 +20,8 @@ namespace sms_activate_lib
         private string ApiKey = string.Empty;
         private string Proxy = string.Empty;
         private string Service = string.Empty;
+        private string Forward = string.Empty;
+        private string Operator = string.Empty;
 
   
 
@@ -69,9 +71,19 @@ namespace sms_activate_lib
             return ok;
         }
 
-
+        //Приватная функция получения номера сервиса snms-activate.ru
+        private string smsactivate_getNumber(string ApiKey, string Proxy, string Service, string Forward, string Operator)
+        {
+            string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey
+                + "&action=getNumber&service=" + Service
+                + "&forward=" + Forward
+                + "&operator=" + Operator
+                , Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+            return getnumber;
+        }
+          
         //Получаем номер сервиса sms-activate.ru
-        public string getnumber(string ApiKey, string Proxy)
+        public string getnumber(string ApiKey, string Proxy, string Service, string Forward, string Operator)
         {
             //Получаем баланс сервиса sms-activate.ru
             string smsactivate_balance = getbalance(ApiKey, Proxy);
@@ -81,7 +93,8 @@ namespace sms_activate_lib
             }
 
             string smsactivate_numberstatus = getNumbersStatus(ApiKey, Proxy);
-            return smsactivate_numberstatus;
+            string asdasd = smsactivate_getNumber(ApiKey, Proxy, Service, Forward, Operator);
+            return asdasd;
 
         }
     }
