@@ -30,6 +30,7 @@ namespace sms_activate_lib
         {
            string getbalance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey + 
                "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
             string balance = System.Text.RegularExpressions.Regex.Replace(getbalance, @".*?:", "");
             return balance;
         }
@@ -74,20 +75,55 @@ namespace sms_activate_lib
         //Приватная функция получения номера сервиса snms-activate.ru
         public string smsactivate_getNumber(string ApiKey, string Proxy, string Service, string Forward, string Operator, out string smsactivate_number, out string smsactivate_id)
         {
+            smsactivate_number = string.Empty;
+            smsactivate_id = string.Empty;
+
             string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey
                 + "&action=getNumber&service=" + Service
                 + "&forward=" + Forward
                 + "&operator=" + Operator
                 , Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-        
-             //Получаем номер
-            smsactivate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
 
-            //Получаем id
-            string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
-            smsactivate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+            switch (getnumber)
+            {
+                case "BAD_KEY":
+                    throw new Exception("Неверный API-ключ");
 
-            return "Получили номер и id сервиса sms-activate";
+                case "NO_KEY":
+                    throw new Exception("Укажите API-ключ");
+
+                case "ERROR_SQL":
+                    throw new Exception("ошибка SQL-сервера");
+
+                default:
+                    //Получаем номер
+                    smsactivate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
+
+                    //Получаем id
+                    string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
+                    smsactivate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                    return "Получили номер и id сервиса sms-activate";
+            }
+
+            /*
+            if (!getnumber.Contains("BAD_KEY") && !getnumber.Contains("NO_KEY"))
+            {
+                //Получаем номер
+                smsactivate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
+
+                //Получаем id
+                string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
+                smsactivate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                return "Получили номер и id сервиса sms-activate";
+            }
+            else
+            {
+                throw new Exception("Проблема с API-ключём" );
+            }
+            */
+            
         }
           
         //Получаем номер сервиса sms-activate.ru
@@ -95,17 +131,15 @@ namespace sms_activate_lib
         {
             //Получаем баланс сервиса sms-activate.ru
             string smsactivate_balance = getbalance(ApiKey, Proxy);
-            if (smsactivate_balance.Contains("NO_KEY"))
-            {
-                return "Не указан ключ api сервиса sms-activate";
-            }
-            string smsactivate_number = string.Empty;
-            string smsactivate_id = string.Empty;
-            string smsactivate_numberstatus = getNumbersStatus(ApiKey, Proxy);
-            string asdasd = smsactivate_getNumber(ApiKey, Proxy, Service, Forward, Operator, out smsactivate_number, out smsactivate_id);
-            
-            return asdasd;
 
+                string smsactivate_number = string.Empty;
+                string smsactivate_id = string.Empty;
+                string smsactivate_numberstatus = getNumbersStatus(ApiKey, Proxy);
+
+                //Получаем номер и id сервиса sms-activate.ru
+                string asdasd = smsactivate_getNumber(ApiKey, Proxy, Service, Forward, Operator, out smsactivate_number, out smsactivate_id);
+
+                return asdasd;
         }
     }
 }
