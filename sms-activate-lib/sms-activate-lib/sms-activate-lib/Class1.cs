@@ -72,22 +72,22 @@ namespace sms_activate_lib
         }
 
         //Приватная функция получения номера сервиса snms-activate.ru
-        private string smsactivate_getNumber(string ApiKey, string Proxy, string Service, string Forward, string Operator)
+        public string smsactivate_getNumber(string ApiKey, string Proxy, string Service, string Forward, string Operator, out string smsactivate_number, out string smsactivate_id)
         {
             string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey
                 + "&action=getNumber&service=" + Service
                 + "&forward=" + Forward
                 + "&operator=" + Operator
                 , Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-
+        
              //Получаем номер
-            string sms_activate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
+            smsactivate_number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
 
             //Получаем id
             string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
-            string sms_activate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+            smsactivate_id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
 
-            return sms_activate_number;
+            return "Получили номер и id сервиса sms-activate";
         }
           
         //Получаем номер сервиса sms-activate.ru
@@ -99,9 +99,11 @@ namespace sms_activate_lib
             {
                 return "Не указан ключ api сервиса sms-activate";
             }
-
+            string smsactivate_number = string.Empty;
+            string smsactivate_id = string.Empty;
             string smsactivate_numberstatus = getNumbersStatus(ApiKey, Proxy);
-            string asdasd = smsactivate_getNumber(ApiKey, Proxy, Service, Forward, Operator);
+            string asdasd = smsactivate_getNumber(ApiKey, Proxy, Service, Forward, Operator, out smsactivate_number, out smsactivate_id);
+            
             return asdasd;
 
         }
