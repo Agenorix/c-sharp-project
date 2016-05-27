@@ -137,12 +137,11 @@ namespace sms_activate_lib
                [1] - общее время ожидания смс 
         */
 
-        private string sms_ok (string ApiKey, string Proxy, string Number, string Id, int [] ArrTimers)
+        private string sms_ok (string ApiKey, string Proxy, string Number, string Id)
         {
             // Объявляем переменные
-            int intSmsWait = ArrTimers[0];
-            int intSmsWaitAll = ArrTimers[1];
             string smsstatus = string.Empty;
+            string sms = string.Empty;
 
             string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
                     "&action=setStatus&status=1&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
@@ -150,17 +149,29 @@ namespace sms_activate_lib
             switch(setStatus)
             {
                 case "ACCESS_READY":
+                    for (int i=0; i<10; i++)
+                    {
                     smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-                    "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly); ;
+                                "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly); 
+                    if (smsstatus.Contains("STATUS_OK"))
+                        {
+                            sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*(?=:\$)", "");
+                            continue;
+                        }
+                        else
+                        {
+                            System.Threading.Thread.Sleep(90000);
+                        }
+                    }
                     break;
             }
 
-            return smsstatus;
+            return sms;
         }
 
-        public string getsms(string ApiKey, string Proxy, string Number, string Id, int[] ArrTimers)
+        public string getsms(string ApiKey, string Proxy, string Number, string Id)
         {
-            string smsko = sms_ok(ApiKey, Proxy, Number, Id, new int[2] { 90000, 150000});
+            string smsko = sms_ok(ApiKey, Proxy, Number, Id);
             return smsko;
         }
     }
