@@ -144,7 +144,7 @@ namespace sms_activate_lib
             int intSmsWaitAll = ArrTimers[1];
 
              string service_status = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-                    "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                    "&action=setStatus&status=1&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                  
       
 
