@@ -137,28 +137,24 @@ namespace sms_activate_lib
                [1] - общее время ожидания смс 
         */
 
-        private string getsmsok (string ApiKey, string Proxy, string Number, string Id, int [] ArrTimers)
+        private string sms_ok (string ApiKey, string Proxy, string Number, string Id, int [] ArrTimers)
         {
             // Объявляем переменные
             int intSmsWait = ArrTimers[0];
-            int intCount = ArrTimers[1];
-            string setStatus1 = string.Empty;
+            int intSmsWaitAll = ArrTimers[1];
 
-            //Сообщаем о готовности номера для приема sms
-            //setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-              //  "&action=setStatus&status=1&id=" + Id, Proxy, "UTF -8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            setStatus1 = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-                "&action=getStatus&id=" + Id, Proxy, "UTF -8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+             string service_status = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
+                    "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                 
+      
 
-
-            return setStatus1;
+            return service_status;
         }
 
-        public string getsmscode (string ApiKey, string Proxy, string Number, string Id)
+        public string getsms(string ApiKey, string Proxy, string Number, string Id, int[] ArrTimers)
         {
-            string smsms = getsmsok(ApiKey,Proxy, Number, Id, new int[2] { 90000, 5});
-            return smsms;
+            string smsko = sms_ok(ApiKey, Proxy, Number, Id, new int[2] { 90000, 150000});
+            return smsko;
         }
-
     }
 }
