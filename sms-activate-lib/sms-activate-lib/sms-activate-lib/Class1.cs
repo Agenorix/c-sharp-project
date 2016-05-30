@@ -149,7 +149,7 @@ namespace sms_activate_lib
             switch(setStatus)
             {
                 case "ACCESS_READY":
-                    for (int i=0; i<10; i++)
+                    for (int i=0; i<16; i++)
                     {
                     smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
                                 "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly); 
@@ -160,7 +160,7 @@ namespace sms_activate_lib
                         }
                         else
                         {
-                            System.Threading.Thread.Sleep(90000);
+                            System.Threading.Thread.Sleep(60000);
                         }
                     }
                     break;
@@ -194,6 +194,18 @@ namespace sms_activate_lib
         {
             string smsko = sms_ok(ApiKey, Proxy, Number, Id);
             return smsko;
+        }
+
+        public string finish (string ApiKey, string Proxy, string Id)
+        {
+            string setFinish = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
+                    "&action=setStatus&status=6&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+            switch (setFinish)
+            {
+                case "ACCESS_ACTIVATION":
+                    return "Завершили регистрацию";
+            }
+            return "OK";
         }
     }
 }
