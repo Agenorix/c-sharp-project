@@ -137,14 +137,14 @@ namespace sms_activate_lib
                [1] - общее время ожидания смс 
         */
 
-        private string sms_ok (string ApiKey, string Proxy, string Number, string Id)
+        private string sms_ok (string ApiKey, string Proxy, string Id, string Status)
         {
             // Объявляем переменные
             string smsstatus = string.Empty;
             string sms = string.Empty;
 
             string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-                    "&action=setStatus&status=1&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                    "&action=setStatus&status=" + Status + "&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                  
             switch(setStatus)
             {
@@ -156,7 +156,7 @@ namespace sms_activate_lib
                     if (smsstatus.Contains("STATUS_OK"))
                         {
                             sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
-                            continue;
+                            return sms;
                         }
                         else
                         {
@@ -164,6 +164,9 @@ namespace sms_activate_lib
                         }
                     }
                     break;
+
+                case "ACCESS_ACTIVATION":
+                            return "Номер успешно подтверждён";
 
                 case "STATUS_CANCEL":
                     throw new Exception("Истёк срок ожидания прихода смс");
@@ -190,22 +193,11 @@ namespace sms_activate_lib
             return sms;
         }
 
-        public string getsms(string ApiKey, string Proxy, string Number, string Id)
+        public string getsms(string ApiKey, string Proxy, string Id, string Status)
         {
-            string smsko = sms_ok(ApiKey, Proxy, Number, Id);
+            string smsko = sms_ok(ApiKey, Proxy, Id, Status);
             return smsko;
         }
 
-        public string finish (string ApiKey, string Proxy, string Id)
-        {
-            string setFinish = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey +
-                    "&action=setStatus&status=6&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            switch (setFinish)
-            {
-                case "ACCESS_ACTIVATION":
-                    return "Завершили регистрацию";
-            }
-            return "OK";
-        }
     }
 }
