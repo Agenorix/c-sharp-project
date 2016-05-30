@@ -155,7 +155,7 @@ namespace sms_activate_lib
                                 "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly); 
                     if (smsstatus.Contains("STATUS_OK"))
                         {
-                            sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*(?=:\$)", "");
+                            sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
                             continue;
                         }
                         else
@@ -164,6 +164,9 @@ namespace sms_activate_lib
                         }
                     }
                     break;
+
+                case "STATUS_CANCEL":
+                    throw new Exception("Неверный API-ключ");
             }
 
             return sms;
