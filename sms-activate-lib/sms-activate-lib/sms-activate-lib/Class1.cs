@@ -166,7 +166,25 @@ namespace sms_activate_lib
                     break;
 
                 case "STATUS_CANCEL":
+                    throw new Exception("Истёк срок ожидания прихода смс");
+
+                case "ERROR_SQL":
+                    throw new Exception("Ошибка SQL-сервера");
+
+                case "NO_ACTIVATION":
+                    throw new Exception("Id активации не существует");
+
+                case "BAD_SERVICE":
+                    throw new Exception("Некорректное наименование сервиса");
+
+                case "BAD_STATUS":
+                    throw new Exception("Некорректный статус");
+
+                case "BAD_KEY":
                     throw new Exception("Неверный API-ключ");
+
+                case "BAD_ACTION":
+                    throw new Exception("Некорректное действие");
             }
 
             return sms;
