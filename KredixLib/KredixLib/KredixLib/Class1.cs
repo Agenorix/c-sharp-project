@@ -105,7 +105,16 @@ namespace KredixLib
                 smsvk = "null";
             }
 
-            return smsvk;
+            //Получение баланса smsarea.org
+            string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
+                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+            string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
+            if (smsarea_balance == "0")
+            {
+                smsarea = "ПОложительный баланс";
+            }
+
+            return smsarea_balance;
         } 
 
     }
