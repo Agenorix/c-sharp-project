@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 using ZennoLab.CommandCenter;
 using ZennoLab.InterfacesLibrary;
 using ZennoLab.InterfacesLibrary.ProjectModel;
@@ -45,22 +46,19 @@ namespace KredixLib
         //Списки
         List<string> sms_services = new List<string>();
 
-        public string getbalanceall (string ApiKey_smsreg, string ApiKey_smsactivate, string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea, string ApiKey_onlinesim)
+        public string getbalanceall (string Services, string ApiKey_smsreg, string ApiKey_smsactivate, string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea, string ApiKey_onlinesim)
         {
             //Получаем баланс sms-activate.ru
             string smsactivate_getbalance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                 "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
             string smsactivate_balance = System.Text.RegularExpressions.Regex.Replace(smsactivate_getbalance, @".*?:", "");
-            /*
-            if (smsactivate_balance == "0")
-            {
-                smsactivate_balance = "null";
-            }
-            */
             sms_services.Add(smsactivate_balance);
 
-            //Получаем баланс sms-reg.ru
+            string[] arrServices = Services.Split(',');
+            string asasas = arrServices[2];
+
+             //Получаем баланс sms-reg.ru
             string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
             var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
             Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
@@ -104,7 +102,7 @@ namespace KredixLib
             string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
             sms_services.Add(smsarea_balance);
 
-          return sms_services[1];
+          return asasas;
         }
 
     }
