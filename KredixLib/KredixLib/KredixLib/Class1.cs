@@ -55,16 +55,32 @@ namespace KredixLib
 
             //Получаем баланс sms-reg.ru
             string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            var jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-            Dictionary<string, object> data = jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
-            string response = data["response"].ToString();
-            string smsreg_balance = data["balance"].ToString();
+            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
+            string smsreg_response = smsreg_data["response"].ToString();
+            string smsreg_balance = smsreg_data["balance"].ToString();
             if (smsreg_balance == "0")
             {
                 smsreg = "null";
             }
 
-            return smsreg_balance;
+            //Получаем баланс simsms
+            string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy, 
+                "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+            var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+            Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+            string simsms_response = simsms_data["response"].ToString();
+            string simsms_balance = simsms_data["balance"].ToString();
+            if (simsms_response != "1")
+            {
+                smsreg = "null";
+            }
+            if (simsms_balance == "0")
+            {
+                smsreg = "null";
+            }
+
+            return simsms_balance;
         } 
 
     }
