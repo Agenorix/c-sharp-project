@@ -85,14 +85,27 @@ namespace KredixLib
             //Проверяем статус сим карты
             string smsvk_getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getSimStatus", Proxy,
                 "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            if (smsvk_getSimStatus.Contains("OK"))
+
+            //Получаем баланс
+            for (int i = 0; i < 10; i++)
             {
-                string smsvk_getbalance = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getBalance", Proxy,
-                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                smsvk_balance = System.Text.RegularExpressions.Regex.Replace(smsvk_getbalance, @".*?:", "");
+                if (smsvk_getSimStatus.Contains("OK"))
+                {
+                    string smsvk_getbalance = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getBalance", Proxy,
+                        "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                    smsvk_balance = System.Text.RegularExpressions.Regex.Replace(smsvk_getbalance, @".*?:", "");
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(60000);
+                }
+            }
+            if (smsvk_balance == "0.00")
+            {
+                smsvk = "null";
             }
 
-            return smsvk_balance;
+            return smsvk;
         } 
 
     }
