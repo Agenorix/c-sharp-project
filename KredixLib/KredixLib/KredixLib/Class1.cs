@@ -41,7 +41,7 @@ namespace KredixLib
         private string Number = string.Empty;
         private string Id = string.Empty;
 
-        private string getbalanceall (string ApiKey_smsreg, string ApiKey_smsactivate, string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea, string ApiKey_onlinesim)
+        public string getbalanceall (string ApiKey_smsreg, string ApiKey_smsactivate, string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea, string ApiKey_onlinesim)
         {
             //Получаем баланс sms-activate.ru
             string smsactivate_getbalance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
@@ -52,7 +52,20 @@ namespace KredixLib
             {
                 smsactivate = "null";
             }
-            return "ok";
+
+            //Получаем баланс sms-reg.ru
+            string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+            var jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+            Dictionary<string, object> data = jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
+            string response = data["response"].ToString();
+            string smsreg_balance = data["balance"].ToString();
+            if (smsreg_balance == "0")
+            {
+                smsreg = "null";
+            }
+
+            return smsreg_balance;
         } 
+
     }
 }
