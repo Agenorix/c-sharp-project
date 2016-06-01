@@ -79,12 +79,12 @@ namespace KredixLib
                         Dictionary<string, object> data = jsonser.Deserialize<Dictionary<string, object>>(getNumbersStatus);
                         switch (Service_Id)
                         {
-                            case "ВКонтакте":
+                            case "вконтакте":
                                 Site_Id = "vk";
                                 servicebalance = data["vk_0"].ToString();
                                 break;
 
-                            case "Одноклассники":
+                            case "одноклассники":
                                 Site_Id = "ok";
                                 servicebalance = data["ok_0"].ToString();
                                 break;
@@ -264,16 +264,113 @@ namespace KredixLib
 
                         //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
 
-                        /*
-                        //[sms-reg.com] Создаем операцию на оспользование номера
-                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=mailru&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        //[sms-reg.com] Создаем операцию на использование номера
+                        switch (Service_Id)
+                        {
+                            case "4game":
+                                Site_Id = "4game";
+                                break;
+
+                            case "gmail":
+                                Site_Id = "gmail";
+                                break;
+
+                            case "facebook":
+                                Site_Id = "facebook";
+                                break;
+
+                            case "mailru":
+                                Site_Id = "mailru";
+                                break;
+
+                            case "ВКонтакте":
+                                Site_Id = "vk";
+                                break;
+
+                            case "Одноклассники":
+                                Site_Id = "classmates";
+                                break;
+
+                            case "twitter":
+                                Site_Id = "twitter";
+                                break;
+
+                            case "mamba":
+                                Site_Id = "mamba";
+                                break;
+
+                            case "loveplanet":
+                                Site_Id = "loveplanet";
+                                break;
+
+                            case "telegram":
+                                Site_Id = "telegram";
+                                break;
+
+                            case "badoo":
+                                Site_Id = "badoo";
+                                break;
+
+                            case "drugvokrug":
+                                Site_Id = "drugvokrug";
+                                break;
+
+                            case "avito":
+                                Site_Id = "avito";
+                                break;
+
+                            case "wabos":
+                                Site_Id = "wabos";
+                                break;
+
+                            case "steam":
+                                Site_Id = "steam";
+                                break;
+
+                            case "fotostrana":
+                                Site_Id = "fotostrana";
+                                break;
+
+                            case "hosting":
+                                Site_Id = "hosting";
+                                break;
+
+                            case "viber":
+                                Site_Id = "Viber";
+                                break;
+
+                            case "whatsapp":
+                                Site_Id = "whatsapp";
+                                break;
+
+                            case "tabor":
+                                Site_Id = "tabor";
+                                break;
+
+                            case "seosprint":
+                                Site_Id = "seosprint";
+                                break;
+
+                            case "instagram":
+                                Site_Id = "instagram";
+                                break;
+
+                            case "matroskin":
+                                Site_Id = "matroskin";
+                                break;
+
+                            default:
+                                Site_Id = "other";
+                                break;
+                        }
+
+                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                         Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
                         string response = getnum_data["response"].ToString();
-                        string tzid = getnum_data["tzid"].ToString();*/
-                        return "OK";
-                        
-
+                        string tzid = getnum_data["tzid"].ToString();
+                        return tzid;
+                       
                     default:
                         return "Выберите правильный сервис";
                 }
