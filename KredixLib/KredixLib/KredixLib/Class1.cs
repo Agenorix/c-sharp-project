@@ -50,6 +50,7 @@ namespace KredixLib
         {
             //Number = string.Empty;
             //Id = string.Empty;
+            string servicebalance = string.Empty;
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -63,16 +64,11 @@ namespace KredixLib
                             "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         string smsactivate_balance = System.Text.RegularExpressions.Regex.Replace(smsactivate_getbalance, @".*?:", "");
-                        if (Convert.ToInt32(smsactivate_balance) < 0)
+                        if (Convert.ToInt32(smsactivate_balance) == 0)
                         {
                             break;
                         }
-                        else
-                        {
-                            return smsactivate_balance;
-                        }
 
-                        /*
                         //Запрашиваем в sms-activate.ru количество свободных номеров
                         string getNumbersStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                             "&action=getNumbersStatus", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
@@ -81,40 +77,126 @@ namespace KredixLib
                         switch (Service_Id)
                         {
                             case "vk":
-                                string vk = data["vk_0"].ToString();
+                                servicebalance = data["vk_0"].ToString();
                                 break;
 
+                            case "ok":
+                                servicebalance = data["ok_0"].ToString();
+                                break;
 
-                        string ok = data["ok_0"].ToString();
-                        string wa = data["wa_0"].ToString();
-                        string vi = data["vi_0"].ToString();
-                        string tg = data["tg_0"].ToString();
-                        string wb = data["wb_0"].ToString();
-                        string go = data["go_0"].ToString();
-                        string av = data["av_0"].ToString();
-                        string av_1 = data["av_1"].ToString();
-                        string fb = data["fb_0"].ToString();
-                        string tw = data["tw_0"].ToString();
-                        string ub = data["ub_0"].ToString();
-                        string qw = data["qw_0"].ToString();
-                        string gt = data["gt_0"].ToString();
-                        string sn = data["sn_0"].ToString();
-                        string ig = data["ig_0"].ToString();
-                        string ss = data["ss_0"].ToString();
-                        string ym = data["ym_0"].ToString();
-                        string ya = data["ya_0"].ToString();
-                        string ma = data["ma_0"].ToString();
-                        string mm = data["mm_0"].ToString();
-                        string uk = data["uk_0"].ToString();
-                        string me = data["me_0"].ToString();
-                        string mb = data["mb_0"].ToString();
-                        string we = data["we_0"].ToString();
-                        string ot = data["ot_0"].ToString();
-                        string ot_1 = data["ot_1"].ToString();
+                            case "wa":
+                                servicebalance = data["wa_0"].ToString();
+                                break;
+
+                            case "vi":
+                                servicebalance = data["vi_0"].ToString();
+                                break;
+
+                            case "tg":
+                                servicebalance = data["tg_0"].ToString();
+                                break;
+
+                            case "wb":
+                                servicebalance = data["wb_0"].ToString();
+                                break;
+
+                            case "go":
+                                servicebalance = data["go_0"].ToString();
+                                break;
+
+                            case "av":
+                                servicebalance = data["av_0"].ToString();
+                                break;
+
+                            case "av_1":
+                                servicebalance = data["av_1"].ToString();
+                                break;
+
+                            case "fb":
+                                servicebalance = data["fb_0"].ToString();
+                                break;
+
+                            case "tw":
+                                servicebalance = data["tw_0"].ToString();
+                                break;
+
+                            case "ub":
+                                servicebalance = data["ub_0"].ToString();
+                                break;
+
+                            case "qw":
+                                servicebalance = data["qw_0"].ToString();
+                                break;
+
+                            case "gt":
+                                servicebalance = data["gt_0"].ToString();
+                                break;
+
+                            case "sn":
+                                servicebalance = data["sn_0"].ToString();
+                                break;
+
+                            case "ig":
+                                servicebalance = data["ig_0"].ToString();
+                                break;
+
+                            case "ss":
+                                servicebalance = data["ss_0"].ToString();
+                                break;
+
+                            case "ym":
+                                servicebalance = data["ym_0"].ToString();
+                                break;
+
+                            case "ya":
+                                servicebalance = data["ya_0"].ToString();
+                                break;
+
+                            case "ma":
+                                servicebalance = data["ma_0"].ToString();
+                                break;
+
+                            case "mm":
+                                servicebalance = data["mm_0"].ToString();
+                                break;
+
+                            case "uk":
+                                servicebalance = data["uk_0"].ToString();
+                                break;
+
+                            case "me":
+                                servicebalance = data["me_0"].ToString();
+                                break;
+
+                            case "mb":
+                                servicebalance = data["mb_0"].ToString();
+                                break;
+
+                            case "we":
+                                servicebalance = data["we_0"].ToString();
+                                break;
+
+                            case "ot":
+                                servicebalance = data["ot_0"].ToString();
+                                break;
+
+                            case "ot_1":
+                                servicebalance = data["ot_1"].ToString();
+                                break;
+
+                            default:
+                                throw new Exception("Введите правильную абревиатуру сервиса");
                         }
-                        */
+                        if (Int32.Parse(servicebalance) == 0)
+                        {
+                            return "Нулевой баланс в сервисе";
+                        }
+                        else
+                        {
+                            return servicebalance;
+                        }
 
-                       // break;
+                        //break;
                 }
             }
 
