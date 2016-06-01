@@ -241,10 +241,12 @@ namespace KredixLib
                                 price = "2";
                                 break;
                         }
+                        /*
                         if (Int32.Parse(servicebalance) == 0 || Int32.Parse(price) > Int32.Parse(servicebalance))
                         {
                             return "Нулевой баланс в сервисе";
                         }
+                        */
 
                         //[sms-activate.ru] Получаем номер и id
                         string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
@@ -278,10 +280,34 @@ namespace KredixLib
                     case "sms-reg.com":
                         //[sms-reg.com] Получаем баланс
                         string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                        Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
-                        string smsreg_response = smsreg_data["response"].ToString();
-                        string smsreg_balance = smsreg_data["balance"].ToString();
+
+
+                        if (smsreg_getbalance.Contains("ERROR"))
+                        {
+                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
+                            string smsreg_response = smsreg_data["response"].ToString();
+                            string smsreg_error = smsreg_data["error_msg"].ToString();
+
+                            switch(smsreg_error)
+                            {
+                                case "ERROR_NO_KEY":
+                                    throw new Exception("Укажите ApiKey сервиса sms-reg.com. И проверьте сразу ключи остальных сервисов :)");
+
+                                case "ERROR_WRONG_KEY":
+                                    throw new Exception("Указан неверный ключ API сервиса sms-reg.com");
+
+                                case "ERROR_KEY_NEED_CHANGE":
+                                    throw new Exception("Требует замены ключ API сервиса sms-reg.com");
+                            }
+                        }
+                        else
+                        {
+                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
+                            string smsreg_response = smsreg_data["response"].ToString();
+                            string smsreg_balance = smsreg_data["balance"].ToString();
+                        }
 
                         //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
 
@@ -409,16 +435,41 @@ namespace KredixLib
                                 break;
                         }
 
+                        /*
                         if (double.Parse(smsreg_balance) == 0.00 || double.Parse(price) > double.Parse(smsreg_balance))
                             {
                             return "smsreg пуст";
                             }
-                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                        Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
-                        string response = getnum_data["response"].ToString();
-                        string tzid = getnum_data["tzid"].ToString();
-                        return tzid;
+                            */
+                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + "vvk" + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        if (smsreg_getbalance.Contains("ERROR"))
+                        {
+                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(getnum);
+                            string smsreg_response = smsreg_data["response"].ToString();
+                            string smsreg_error = smsreg_data["error_msg"].ToString();
+
+                            switch (smsreg_error)
+                            {
+                                case "Service not define":
+                                    throw new Exception("В сервисе sms-reg.com не определен сервис");
+
+                                case "WARNING_LOW_BALANCE":
+                                    throw new Exception("В сервисе sms-reg.com недостаточно денег на счету");
+
+                                case "Wrong characters in parameters":
+                                    throw new Exception("В сервисе sms-reg.com недопустимые символы в передаваемых данных");
+                            }
+                        }
+                        else
+                        {
+                            var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
+                            string response = getnum_data["response"].ToString();
+                            string tzid = getnum_data["tzid"].ToString();
+                        }
+
+                        return getnum;
                        
                     default:
                         return "Выберите правильный сервис";
