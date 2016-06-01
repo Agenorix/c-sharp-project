@@ -37,7 +37,7 @@ namespace KredixLib
         //Общие переменные
         private string Proxy = string.Empty;
         private string Service = string.Empty;
-        private string Forward = string.Empty;
+        //private string Forward = string.Empty;
         private string Operator = string.Empty;
         private string Number = string.Empty;
         private string Id = string.Empty;
@@ -46,10 +46,12 @@ namespace KredixLib
         //Списки
         List<string> sms_services = new List<string>();
 
-        public string getNumber (string Services_Activate, string Service_Id, string ApiKey_smsreg, string ApiKey_smsactivate, string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea, string ApiKey_onlinesim)
+        public string getNumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
+            string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
+            string ApiKey_onlinesim, out string Number, out string Id)
         {
-            //Number = string.Empty;
-            //Id = string.Empty;
+            Number = string.Empty;
+            Id = string.Empty;
             string servicebalance = string.Empty;
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
@@ -191,9 +193,34 @@ namespace KredixLib
                         {
                             return "Нулевой баланс в сервисе";
                         }
-                        else
+
+                        //Получаем номер в сервисе sms-activate.ru
+                        string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
+                            + "&action=getNumber&service=" + Service_Id + "&operator=" + Operator, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        switch (getnumber)
                         {
-                            return servicebalance;
+                            case "BAD_KEY":
+                                throw new Exception("Неверный API-ключ");
+
+                            case "NO_KEY":
+                                throw new Exception("Укажите API-ключ");
+
+                            case "ERROR_SQL":
+                                throw new Exception("ошибка SQL-сервера");
+
+                            case "WRONG_SERVICE":
+                                throw new Exception("Неправильно указан сервис, который нужно активировать");
+
+                            default:
+                                //Получаем номер
+                                Number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
+
+                                //Получаем id
+                                string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
+                                Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                                return "Получили номер и id сервиса sms-activate";
                         }
 
                         //break;
