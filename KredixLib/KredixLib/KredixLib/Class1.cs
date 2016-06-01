@@ -53,6 +53,7 @@ namespace KredixLib
             Number = string.Empty;
             Id = string.Empty;
             string servicebalance = string.Empty;
+            string Site_Id = string.Empty;
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -61,7 +62,7 @@ namespace KredixLib
                 switch (service)
                 {
                     case "sms-activate.ru":
-                        //Получаем баланс sms-activate.ru
+                        //[sms-activate.ru] Получаем баланс
                         string smsactivate_getbalance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                             "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
@@ -71,115 +72,136 @@ namespace KredixLib
                             break;
                         }
 
-                        //Запрашиваем в sms-activate.ru количество свободных номеров
+                        //[sms-activate.ru] Запрашиваем количество свободных номеров
                         string getNumbersStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                             "&action=getNumbersStatus", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                         Dictionary<string, object> data = jsonser.Deserialize<Dictionary<string, object>>(getNumbersStatus);
                         switch (Service_Id)
                         {
-                            case "vk":
+                            case "ВКонтакте":
+                                Site_Id = "vk";
                                 servicebalance = data["vk_0"].ToString();
                                 break;
 
-                            case "ok":
+                            case "Одноклассники":
+                                Site_Id = "ok";
                                 servicebalance = data["ok_0"].ToString();
                                 break;
 
-                            case "wa":
+                            case "whatsapp":
+                                Site_Id = "wa";
                                 servicebalance = data["wa_0"].ToString();
                                 break;
 
-                            case "vi":
+                            case "viber":
+                                Site_Id = "vi";
                                 servicebalance = data["vi_0"].ToString();
                                 break;
 
-                            case "tg":
+                            case "telegram":
+                                Site_Id = "tg";
                                 servicebalance = data["tg_0"].ToString();
                                 break;
 
-                            case "wb":
+                            case "periscope":
+                                Site_Id = "wb";
                                 servicebalance = data["wb_0"].ToString();
                                 break;
 
-                            case "go":
+                            case "gmail":
+                                Site_Id = "go";
                                 servicebalance = data["go_0"].ToString();
                                 break;
 
-                            case "av":
+                            case "avito":
+                                Site_Id = "av";
                                 servicebalance = data["av_0"].ToString();
                                 break;
 
-                            case "av_1":
+                            case "avito_1":
+                                Site_Id = "av_1";
                                 servicebalance = data["av_1"].ToString();
                                 break;
 
-                            case "fb":
+                            case "facebook":
+                                Site_Id = "fb";
                                 servicebalance = data["fb_0"].ToString();
                                 break;
 
-                            case "tw":
+                            case "twitter":
+                                Site_Id = "tw";
                                 servicebalance = data["tw_0"].ToString();
                                 break;
 
-                            case "ub":
+                            case "Taxi2412":
+                                Site_Id = "ub";
                                 servicebalance = data["ub_0"].ToString();
                                 break;
 
-                            case "qw":
+                            case "qiwi":
+                                Site_Id = "qw";
                                 servicebalance = data["qw_0"].ToString();
                                 break;
 
-                            case "gt":
+                            case "gett":
+                                Site_Id = "gt";
                                 servicebalance = data["gt_0"].ToString();
                                 break;
 
-                            case "sn":
+                            case "webmoney":
+                                Site_Id = "sn";
                                 servicebalance = data["sn_0"].ToString();
                                 break;
 
-                            case "ig":
+                            case "instagram":
+                                Site_Id = "ig";
                                 servicebalance = data["ig_0"].ToString();
                                 break;
 
-                            case "ss":
+                            case "seosprint":
+                                Site_Id = "ss";
                                 servicebalance = data["ss_0"].ToString();
                                 break;
 
-                            case "ym":
+                            case "alibaba":
+                                Site_Id = "ym";
                                 servicebalance = data["ym_0"].ToString();
                                 break;
 
-                            case "ya":
+                            case "яндекс":
+                                Site_Id = "ya";
                                 servicebalance = data["ya_0"].ToString();
                                 break;
 
-                            case "ma":
+                            case "taobao":
+                                Site_Id = "ma";
                                 servicebalance = data["ma_0"].ToString();
                                 break;
 
-                            case "mm":
+                            case "microsoft":
+                                Site_Id = "mm";
                                 servicebalance = data["mm_0"].ToString();
                                 break;
 
-                            case "uk":
+                            case "datingru":
+                                Site_Id = "uk";
                                 servicebalance = data["uk_0"].ToString();
                                 break;
 
-                            case "me":
+                            case "gem4me":
+                                Site_Id = "me";
                                 servicebalance = data["me_0"].ToString();
                                 break;
 
-                            case "mb":
+                            case "yahoo":
+                                Site_Id = "mb";
                                 servicebalance = data["mb_0"].ToString();
                                 break;
 
-                            case "we":
+                            case "aol":
+                                Site_Id = "we";
                                 servicebalance = data["we_0"].ToString();
-                                break;
-
-                            case "ot":
-                                servicebalance = data["ot_0"].ToString();
                                 break;
 
                             case "ot_1":
@@ -187,16 +209,18 @@ namespace KredixLib
                                 break;
 
                             default:
-                                throw new Exception("Введите правильную абревиатуру сервиса");
+                                Site_Id = "ot";
+                                servicebalance = data["ot_0"].ToString();
+                                break;
                         }
                         if (Int32.Parse(servicebalance) == 0)
                         {
                             return "Нулевой баланс в сервисе";
                         }
 
-                        //Получаем номер в сервисе sms-activate.ru
+                        //[sms-activate.ru] Получаем номер и id
                         string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
-                            + "&action=getNumber&service=" + Service_Id + "&operator=" + Operator, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                            + "&action=getNumber&service=" + Site_Id + "&operator=" + Operator, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         switch (getnumber)
                         {
@@ -213,17 +237,22 @@ namespace KredixLib
                                 throw new Exception("Неправильно указан сервис, который нужно активировать");
 
                             default:
-                                //Получаем номер
+                                //[sms-activate.ru] Получаем номер
                                 Number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
 
-                                //Получаем id
+                                //[sms-activate.ru] Получаем id
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
 
                                 return "Получили номер и id сервиса sms-activate";
                         }
 
-                        //break;
+                    case "sms-reg.com":
+                        //[sms-reg.com] Создаем операцию на оспользование номера
+                        string getnum = ZennoPoster.HttpGet("", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        break;
+                    default:
+                        return "Выберите правильный сервис";
                 }
             }
 
