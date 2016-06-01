@@ -52,8 +52,9 @@ namespace KredixLib
         {
             Number = string.Empty;
             Id = string.Empty;
-            string servicebalance = string.Empty;
-            string Site_Id = string.Empty;
+            string servicebalance = string.Empty;//Баланс сервисов активации
+            string Site_Id = string.Empty;//Id сайтов в разных сервисах активации
+            string price = string.Empty;//сумма активации номера
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -82,138 +83,165 @@ namespace KredixLib
                             case "вконтакте":
                                 Site_Id = "vk";
                                 servicebalance = data["vk_0"].ToString();
+                                price = "9";
                                 break;
 
                             case "одноклассники":
                                 Site_Id = "ok";
                                 servicebalance = data["ok_0"].ToString();
+                                price = "5";
                                 break;
 
                             case "whatsapp":
                                 Site_Id = "wa";
                                 servicebalance = data["wa_0"].ToString();
+                                price = "6";
                                 break;
 
                             case "viber":
                                 Site_Id = "vi";
                                 servicebalance = data["vi_0"].ToString();
+                                price = "3";
                                 break;
 
                             case "telegram":
                                 Site_Id = "tg";
                                 servicebalance = data["tg_0"].ToString();
+                                price = "3";
                                 break;
 
                             case "periscope":
                                 Site_Id = "wb";
                                 servicebalance = data["wb_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "gmail":
                                 Site_Id = "go";
                                 servicebalance = data["go_0"].ToString();
+                                price = "3";
                                 break;
 
                             case "avito":
                                 Site_Id = "av";
                                 servicebalance = data["av_0"].ToString();
+                                price = "4";
                                 break;
 
                             case "avito_1":
                                 Site_Id = "av_1";
                                 servicebalance = data["av_1"].ToString();
+                                price = "30";
                                 break;
 
                             case "facebook":
                                 Site_Id = "fb";
                                 servicebalance = data["fb_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "twitter":
                                 Site_Id = "tw";
                                 servicebalance = data["tw_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "Taxi2412":
                                 Site_Id = "ub";
                                 servicebalance = data["ub_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "qiwi":
                                 Site_Id = "qw";
                                 servicebalance = data["qw_0"].ToString();
+                                price = "6";
                                 break;
 
                             case "gett":
                                 Site_Id = "gt";
                                 servicebalance = data["gt_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "webmoney":
                                 Site_Id = "sn";
                                 servicebalance = data["sn_0"].ToString();
+                                price = "4";
                                 break;
 
                             case "instagram":
                                 Site_Id = "ig";
                                 servicebalance = data["ig_0"].ToString();
+                                price = "5";
                                 break;
 
                             case "seosprint":
                                 Site_Id = "ss";
                                 servicebalance = data["ss_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "alibaba":
                                 Site_Id = "ym";
                                 servicebalance = data["ym_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "яндекс":
                                 Site_Id = "ya";
                                 servicebalance = data["ya_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "taobao":
                                 Site_Id = "ma";
                                 servicebalance = data["ma_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "microsoft":
                                 Site_Id = "mm";
                                 servicebalance = data["mm_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "datingru":
                                 Site_Id = "uk";
                                 servicebalance = data["uk_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "gem4me":
                                 Site_Id = "me";
                                 servicebalance = data["me_0"].ToString();
+                                price = "2";
                                 break;
 
                             case "yahoo":
                                 Site_Id = "mb";
                                 servicebalance = data["mb_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "aol":
                                 Site_Id = "we";
                                 servicebalance = data["we_0"].ToString();
+                                price = "1";
                                 break;
 
                             case "ot_1":
                                 servicebalance = data["ot_1"].ToString();
+                                price = "30";
                                 break;
 
                             default:
                                 Site_Id = "ot";
                                 servicebalance = data["ot_0"].ToString();
+                                price = "2";
                                 break;
                         }
-                        if (Int32.Parse(servicebalance) == 0)
+                        if (Int32.Parse(servicebalance) == 0 || Int32.Parse(price) > Int32.Parse(servicebalance))
                         {
                             return "Нулевой баланс в сервисе";
                         }
@@ -255,13 +283,6 @@ namespace KredixLib
                         string smsreg_response = smsreg_data["response"].ToString();
                         string smsreg_balance = smsreg_data["balance"].ToString();
 
-                        
-             
-                        if(double.Parse(smsreg_balance) != 0.00)
-                        {
-                            return "smsreg пуст";
-                        }
-
                         //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
 
                         //[sms-reg.com] Создаем операцию на использование номера
@@ -269,101 +290,129 @@ namespace KredixLib
                         {
                             case "4game":
                                 Site_Id = "4game";
+                                price = "3.00";
                                 break;
 
                             case "gmail":
                                 Site_Id = "gmail";
+                                price = "4.00";
                                 break;
 
                             case "facebook":
                                 Site_Id = "facebook";
+                                price = "3.00";
                                 break;
 
                             case "mailru":
                                 Site_Id = "mailru";
+                                price = "3.00";
                                 break;
 
                             case "ВКонтакте":
                                 Site_Id = "vk";
+                                price = "14.00";
                                 break;
 
                             case "Одноклассники":
                                 Site_Id = "classmates";
+                                price = "7.00";
                                 break;
 
                             case "twitter":
                                 Site_Id = "twitter";
+                                price = "3.00";
                                 break;
 
                             case "mamba":
                                 Site_Id = "mamba";
+                                price = "3.00";
                                 break;
 
                             case "loveplanet":
                                 Site_Id = "loveplanet";
+                                price = "3.00";
                                 break;
 
                             case "telegram":
                                 Site_Id = "telegram";
+                                price = "3.00";
                                 break;
 
                             case "badoo":
                                 Site_Id = "badoo";
+                                price = "3.00";
                                 break;
 
                             case "drugvokrug":
                                 Site_Id = "drugvokrug";
+                                price = "3.00";
                                 break;
 
                             case "avito":
                                 Site_Id = "avito";
+                                price = "3.00";
                                 break;
 
                             case "wabos":
                                 Site_Id = "wabos";
+                                price = "3.00";
                                 break;
 
                             case "steam":
                                 Site_Id = "steam";
+                                price = "3.00";
                                 break;
 
                             case "fotostrana":
                                 Site_Id = "fotostrana";
+                                price = "3.00";
                                 break;
 
                             case "hosting":
                                 Site_Id = "hosting";
+                                price = "3.00";
                                 break;
 
                             case "viber":
                                 Site_Id = "Viber";
+                                price = "3.00";
                                 break;
 
                             case "whatsapp":
                                 Site_Id = "whatsapp";
+                                price = "3.00";
                                 break;
 
                             case "tabor":
                                 Site_Id = "tabor";
+                                price = "3.00";
                                 break;
 
                             case "seosprint":
                                 Site_Id = "seosprint";
+                                price = "3.00";
                                 break;
 
                             case "instagram":
                                 Site_Id = "instagram";
+                                price = "3.00";
                                 break;
 
                             case "matroskin":
                                 Site_Id = "matroskin";
+                                price = "3.00";
                                 break;
 
                             default:
                                 Site_Id = "other";
+                                price = "4.00";
                                 break;
                         }
 
+                        if (double.Parse(smsreg_balance) == 0.00 || double.Parse(price) > double.Parse(smsreg_balance))
+                            {
+                            return "smsreg пуст";
+                            }
                         string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                         Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
