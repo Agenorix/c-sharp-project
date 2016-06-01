@@ -248,6 +248,19 @@ namespace KredixLib
                         }
 
                     case "sms-reg.com":
+
+                        //[sms-reg.com] Получаем баланс
+                        string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
+                        string smsreg_response = smsreg_data["response"].ToString();
+                        string smsreg_balance = smsreg_data["balance"].ToString();
+
+                        if (Int32.Parse(smsreg_balance) == 0)
+                        {
+                            return "smsreg пуст";
+                        }
+
                         //[sms-reg.com] Создаем операцию на оспользование номера
                         string getnum = ZennoPoster.HttpGet("", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         break;
@@ -257,15 +270,6 @@ namespace KredixLib
             }
 
 
-
-
-
-              //Получаем баланс sms-reg.ru
-            string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
-            string smsreg_response = smsreg_data["response"].ToString();
-            string smsreg_balance = smsreg_data["balance"].ToString();
 
             //Получаем баланс simsms.org
             string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy, 
