@@ -248,7 +248,6 @@ namespace KredixLib
                         }
 
                     case "sms-reg.com":
-
                         //[sms-reg.com] Получаем баланс
                         string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -256,14 +255,25 @@ namespace KredixLib
                         string smsreg_response = smsreg_data["response"].ToString();
                         string smsreg_balance = smsreg_data["balance"].ToString();
 
-                        if (Int32.Parse(smsreg_balance) == 0)
+                        
+             
+                        if(double.Parse(smsreg_balance) != 0.00)
                         {
                             return "smsreg пуст";
                         }
 
+                        //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
+
+                        /*
                         //[sms-reg.com] Создаем операцию на оспользование номера
-                        string getnum = ZennoPoster.HttpGet("", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        break;
+                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=mailru&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
+                        string response = getnum_data["response"].ToString();
+                        string tzid = getnum_data["tzid"].ToString();*/
+                        return "OK";
+                        
+
                     default:
                         return "Выберите правильный сервис";
                 }
