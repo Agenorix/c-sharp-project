@@ -487,6 +487,7 @@ namespace KredixLib
                                 Number = getState_data["number"].ToString();
                                 Site_Id = getState_data["service"].ToString();
                                 Id = tzid;
+                                return "OK";
                             }
                             else
                             {
@@ -495,10 +496,34 @@ namespace KredixLib
                                     Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                             }
                         }
+                       break;
+
+                    //[SMSVK.NET] ПОЛУЧАЕМ НОМЕР
+
+                    case "smsvk.net":
+
+                        //[smsvk.net] Проверяем баланс
+                        string getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk +"&action=getSimStatus", 
+                            Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        for (int qs = 0; qs < 11; qs++)
+                        {
+                            if (getSimStatus.Contains("OK"))
+                            {
+                                string smsvk_getbalance = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getBalance", Proxy,
+                                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                smsvk_balance = System.Text.RegularExpressions.Regex.Replace(smsvk_getbalance, @".*?:", "");
+                            }
+                            else
+                            {
+                                System.Threading.Thread.Sleep(60000);
+                                getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getSimStatus",
+                                    Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                            }
+                        }
 
 
-                        return "OK";
-                       
+                        return smsvk_balance + " " + "Пусто, блин :)";
+                        
                     default:
                         return "Выберите правильный сервис";
                 }
@@ -513,26 +538,6 @@ namespace KredixLib
             Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
             string simsms_response = simsms_data["response"].ToString();
             string simsms_balance = simsms_data["balance"].ToString();
-
-            //Получаем баланс smsvk.net
-            //Проверяем статус сим карты
-            string smsvk_getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getSimStatus", Proxy,
-                "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-
-            //Получаем баланс
-            for (int i = 0; i < 10; i++)
-            {
-                if (smsvk_getSimStatus.Contains("OK"))
-                {
-                    string smsvk_getbalance = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getBalance", Proxy,
-                        "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                    smsvk_balance = System.Text.RegularExpressions.Regex.Replace(smsvk_getbalance, @".*?:", "");
-                }
-                else
-                {
-                    System.Threading.Thread.Sleep(60000);
-                }
-            }
 
             //Получение баланса smsarea.org
             string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
