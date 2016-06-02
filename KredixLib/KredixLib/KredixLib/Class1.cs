@@ -521,8 +521,170 @@ namespace KredixLib
                             }
                         }
 
+                        //[smsvk.net] Запрашиваем количество свободных номеров
+                        string smsvkgetNumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getNumbersStatus", 
+                            Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        var smsvkjsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        Dictionary<string, object> smsvkdata = smsvkjsonser.Deserialize<Dictionary<string, object>>(smsvkgetNumber);
+                        switch (Service_Id)
+                        {
+                            case "вконтакте":
+                                Site_Id = "vk";
+                                servicebalance = smsvkdata["vk"].ToString();
+                                price = "8";
+                                break;
 
-                        return smsvk_balance + " " + "Пусто, блин :)";
+                            case "одноклассники":
+                                Site_Id = "ok";
+                                servicebalance = smsvkdata["ok"].ToString();
+                                price = "5";
+                                break;
+
+                            case "whatsapp":
+                                Site_Id = "wa";
+                                servicebalance = smsvkdata["wa"].ToString();
+                                price = "10";
+                                break;
+
+                            case "viber":
+                                Site_Id = "vb";
+                                servicebalance = smsvkdata["vb"].ToString();
+                                price = "6";
+                                break;
+
+                            case "telegram":
+                                Site_Id = "tg";
+                                servicebalance = smsvkdata["tg"].ToString();
+                                price = "3";
+                                break;
+
+                            case "periscope":
+                                Site_Id = "ps";
+                                servicebalance = smsvkdata["ps"].ToString();
+                                price = "1";
+                                break;
+
+                            case "gmail":
+                                Site_Id = "gg";
+                                servicebalance = smsvkdata["gg"].ToString();
+                                price = "2";
+                                break;
+
+                            case "avito":
+                                Site_Id = "av";
+                                servicebalance = smsvkdata["av"].ToString();
+                                price = "3";
+                                break;
+
+                            case "facebook":
+                                Site_Id = "fb";
+                                servicebalance = smsvkdata["fb"].ToString();
+                                price = "2";
+                                break;
+
+                            case "twitter":
+                                Site_Id = "tw";
+                                servicebalance = smsvkdata["tw"].ToString();
+                                price = "2";
+                                break;
+
+                            case "qiwi":
+                                Site_Id = "qw";
+                                servicebalance = smsvkdata["qw"].ToString();
+                                price = "6";
+                                break;
+
+                            case "gett":
+                                Site_Id = "gt";
+                                servicebalance = smsvkdata["gt"].ToString();
+                                price = "1";
+                                break;
+
+                            case "instagram":
+                                Site_Id = "ig";
+                                servicebalance = smsvkdata["ig_0"].ToString();
+                                price = "5";
+                                break;
+
+                            case "яндекс":
+                                Site_Id = "ya";
+                                servicebalance = smsvkdata["ya"].ToString();
+                                price = "1";
+                                break;
+
+                            case "microsoft":
+                                Site_Id = "ms";
+                                servicebalance = smsvkdata["ms"].ToString();
+                                price = "1";
+                                break;
+
+                            case "yahoo":
+                                Site_Id = "yh";
+                                servicebalance = smsvkdata["yh"].ToString();
+                                price = "1";
+                                break;
+
+                            case "aol":
+                                Site_Id = "al";
+                                servicebalance = smsvkdata["al"].ToString();
+                                price = "1";
+                                break;
+
+                            case "Мамба":
+                                Site_Id = "ma";
+                                servicebalance = smsvkdata["ma"].ToString();
+                                price = "4";
+                                break;
+
+                            case "4game":
+                                Site_Id = "4g";
+                                servicebalance = smsvkdata["4g"].ToString();
+                                price = "4";
+                                break;
+
+                            case "Drom":
+                                Site_Id = "dr";
+                                servicebalance = smsvkdata["dr"].ToString();
+                                price = "1";
+                                break;
+
+                            case "avito_1":
+                                Site_Id = "rd";
+                                servicebalance = smsvkdata["rd"].ToString();
+                                price = "20";
+                                break;
+
+                            case "mailru":
+                                Site_Id = "mb";
+                                servicebalance = smsvkdata["mb"].ToString();
+                                price = "1";
+                                break;
+
+                            case "таксимаксим":
+                                Site_Id = "mx";
+                                servicebalance = smsvkdata["mx"].ToString();
+                                price = "1";
+                                break;
+
+                            case "спортмастер":
+                                Site_Id = "sm";
+                                servicebalance = smsvkdata["sm"].ToString();
+                                price = "2";
+                                break;
+
+                            case "steam":
+                                Site_Id = "st";
+                                servicebalance = smsvkdata["st"].ToString();
+                                price = "2";
+                                break;
+
+                            default:
+                                Site_Id = "or";
+                                servicebalance = smsvkdata["or"].ToString();
+                                price = "2";
+                                break;
+                        }
+                        return smsvkgetNumber;
                         
                     default:
                         return "Выберите правильный сервис";
