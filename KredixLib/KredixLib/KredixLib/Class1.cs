@@ -55,6 +55,8 @@ namespace KredixLib
             string servicebalance = string.Empty;//Баланс сервисов активации
             string Site_Id = string.Empty;//Id сайтов в разных сервисах активации
             string price = string.Empty;//сумма активации номера
+            string smsreg_balance = string.Empty;//Баланс сервиса sms-reg.com
+            string tzid = string.Empty;//id сервиса sms-reg.com
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -241,12 +243,12 @@ namespace KredixLib
                                 price = "2";
                                 break;
                         }
-                        /*
+                        
                         if (Int32.Parse(servicebalance) == 0 || Int32.Parse(price) > Int32.Parse(servicebalance))
                         {
                             return "Нулевой баланс в сервисе";
                         }
-                        */
+                        
 
                         //[sms-activate.ru] Получаем номер и id
                         string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
@@ -306,7 +308,7 @@ namespace KredixLib
                             var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                             Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
                             string smsreg_response = smsreg_data["response"].ToString();
-                            string smsreg_balance = smsreg_data["balance"].ToString();
+                            smsreg_balance = smsreg_data["balance"].ToString();
                         }
 
                         //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
@@ -441,7 +443,8 @@ namespace KredixLib
                             return "smsreg пуст";
                             }
                             */
-                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + "vvk" + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                            
+                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         if (smsreg_getbalance.Contains("ERROR"))
                         {
                             var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -466,10 +469,35 @@ namespace KredixLib
                             var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                             Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
                             string response = getnum_data["response"].ToString();
-                            string tzid = getnum_data["tzid"].ToString();
+                            tzid = getnum_data["tzid"].ToString();
                         }
 
-                        return getnum;
+                        //Получаем номер в сервисе sms-reg.com
+
+                        string getState = ZennoPoster.HttpGet("http://api.sms-reg.com/getState.php?tzid=" + tzid + "&apikey=" + ApiKey_smsreg,
+                            Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        for (int gs = 0; gs < 60; gs++)
+                        {
+                            if (getState.Contains("TZ_NUM_PREPARE"))
+                            {
+                                var getStatejson = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> getState_data = getStatejson.Deserialize<Dictionary<string, object>>(getState);
+                                string response = getState_data["response"].ToString();
+                                Number = getState_data["number"].ToString();
+                                Site_Id = getState_data["service"].ToString();
+                                Id = tzid;
+                            }
+                            else
+                            {
+                                System.Threading.Thread.Sleep(1000);
+                                getState = ZennoPoster.HttpGet("http://api.sms-reg.com/getState.php?tzid=" + tzid + "&apikey=" + ApiKey_smsreg,
+                                    Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                            }
+                        }
+
+
+                        return "OK";
                        
                     default:
                         return "Выберите правильный сервис";
