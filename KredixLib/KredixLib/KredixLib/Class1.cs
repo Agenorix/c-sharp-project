@@ -875,16 +875,173 @@ namespace KredixLib
                                 return "Получили номер и id сервиса sms-agea.org";
                         }
 
+                    case "simsms.org":
                         //[SIMSMS.ORG] ПОЛУЧАЕМ НОМЕР
 
-                        //[simsms.org] Получаем баланс
-                        string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy,
+                        //[simsms.org] Составляем список сервисов
+                        switch (Service_Id)
+                        {
+                            case "вконтакте":
+                                Site_Id = "opt4";
+                                break;
+
+                            case "Мамба":
+                                Site_Id = "opt7";
+                                break;
+
+                            case "одноклассники":
+                                Site_Id = "opt5";
+                                break;
+
+                            case "4game":
+                                Site_Id = "opt0";
+                                break;
+
+                            case "gmail":
+                                Site_Id = "opt1";
+                                break;
+
+                            case "facebook":
+                                Site_Id = "opt2";
+                                break;
+
+                            case "spacesru":
+                                Site_Id = "opt3";
+                                break;
+
+                            case "linkedln":
+                                Site_Id = "opt8";
+                                break;
+
+                            case "viber":
+                                Site_Id = "opt11";
+                                break;
+
+                            case "фотострана":
+                                Site_Id = "13";
+                                break;
+
+                            case "microsoft":
+                                Site_Id = "opt15";
+                                break;
+
+                            case "instagram":
+                                Site_Id = "opt16";
+                                break;
+
+                            case "qiwi":
+                                Site_Id = "opt18";
+                                break;
+
+                            case "whatsapp":
+                                Site_Id = "opt20";
+                                break;
+
+                            case "webtransfer":
+                                Site_Id = "opt21";
+                                break;
+
+                            case "seosprint":
+                                Site_Id = "opt22";
+                                break;
+
+                            case "яндекс":
+                                Site_Id = "opt23";
+                                break;
+
+                            case "webmoney":
+                                Site_Id = "opt24";
+                                break;
+
+                            case "nasimke":
+                                Site_Id = "opt25";
+                                break;
+
+                            case "comnu":
+                                Site_Id = "opt26";
+                                break;
+
+                            case "dodopizzaru":
+                                Site_Id = "opt27";
+                                break;
+
+                            case "taborru":
+                                Site_Id = "opt28";
+                                break;
+
+                            case "telegram":
+                                Site_Id = "opt29";
+                                break;
+
+                            case "простоквашино":
+                                Site_Id = "opt30";
+                                break;
+
+                            case "другвокруг":
+                                Site_Id = "opt31";
+                                break;
+
+                            case "drom":
+                                Site_Id = "opt32";
+                                break;
+
+                            case "mailru":
+                                Site_Id = "opt33";
+                                break;
+
+                            case "ценобой":
+                                Site_Id = "opt34";
+                                break;
+
+                            case "gettaxi":
+                                Site_Id = "opt35";
+                                break;
+
+                            case "vkserfing":
+                                Site_Id = "opt37";
+                                break;
+
+                            case "avtoru":
+                                Site_Id = "opt38";
+                                break;
+
+                            case "like4u":
+                                Site_Id = "opt39";
+                                break;
+
+                            case "voxoxcom":
+                                Site_Id = "opt40";
+                                break;
+
+                            case "twitter":
+                                Site_Id = "opt41";
+                                break;
+
+                            case "avito":
+                                Site_Id = "opt59";
+                                break;
+
+                            case "mastercard":
+                                Site_Id = "opt71";
+                                break;
+
+                            case "premiaruneta":
+                                Site_Id = "opt72";
+                                break;
+                            case "gem4me":
+                                Site_Id = "opt76";
+                                break;
+                        }
+
+                                //[simsms.org] Получаем баланс
+                                string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy,
                            "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                         Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
                         string simsms_response = simsms_data["response"].ToString();
                         string simsms_balance = simsms_data["balance"].ToString();
-
+                        
+                        return simsms_balance;
                     default:
                         return "Выберите правильный сервис";
                 }
