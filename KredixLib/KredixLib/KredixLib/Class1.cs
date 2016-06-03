@@ -716,7 +716,8 @@ namespace KredixLib
 
                     //[SMS-AREA.ORG] ПОЛУЧЕНИЕ НОМЕРА
                     case "sms-area.com":
-                        //Получение баланса smsarea.org
+
+                        //[sms-area.com] Получение баланса
                         string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
                                 "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
