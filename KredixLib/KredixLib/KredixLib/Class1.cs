@@ -874,7 +874,17 @@ namespace KredixLib
 
                                 return "Получили номер и id сервиса sms-agea.org";
                         }
-                                                
+
+                        //[SIMSMS.ORG] ПОЛУЧАЕМ НОМЕР
+
+                        //[simsms.org] Получаем баланс
+                        string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy,
+                           "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+                        string simsms_response = simsms_data["response"].ToString();
+                        string simsms_balance = simsms_data["balance"].ToString();
+
                     default:
                         return "Выберите правильный сервис";
                 }
@@ -882,13 +892,7 @@ namespace KredixLib
 
 
 
-            //Получаем баланс simsms.org
-            string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy, 
-                "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-            Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
-            string simsms_response = simsms_data["response"].ToString();
-            string simsms_balance = simsms_data["balance"].ToString();
+
 
 
 
