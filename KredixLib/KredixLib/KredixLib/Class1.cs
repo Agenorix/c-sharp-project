@@ -243,12 +243,12 @@ namespace KredixLib
                                 price = "2";
                                 break;
                         }
-                        
+
                         if (Int32.Parse(servicebalance) == 0 || Int32.Parse(price) > Int32.Parse(servicebalance))
                         {
                             return "Нулевой баланс в сервисе";
                         }
-                        
+
 
                         //[sms-activate.ru] Получаем номер и id
                         string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
@@ -291,7 +291,7 @@ namespace KredixLib
                             string smsreg_response = smsreg_data["response"].ToString();
                             string smsreg_error = smsreg_data["error_msg"].ToString();
 
-                            switch(smsreg_error)
+                            switch (smsreg_error)
                             {
                                 case "ERROR_NO_KEY":
                                     throw new Exception("Укажите ApiKey сервиса sms-reg.com. И проверьте сразу ключи остальных сервисов :)");
@@ -443,7 +443,7 @@ namespace KredixLib
                             return "smsreg пуст";
                             }
                             */
-                            
+
                         string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         if (smsreg_getbalance.Contains("ERROR"))
                         {
@@ -496,14 +496,14 @@ namespace KredixLib
                                     Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                             }
                         }
-                       break;
+                        break;
 
                     //[SMSVK.NET] ПОЛУЧАЕМ НОМЕР
 
                     case "smsvk.net":
 
                         //[smsvk.net] Проверяем баланс
-                        string getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk +"&action=getSimStatus", 
+                        string getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getSimStatus",
                             Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         for (int qs = 0; qs < 11; qs++)
                         {
@@ -522,7 +522,7 @@ namespace KredixLib
                         }
 
                         //[smsvk.net] Запрашиваем количество свободных номеров
-                        string smsvkgetNumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getNumbersStatus", 
+                        string smsvkgetNumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getNumbersStatus",
                             Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var smsvkjsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
                         Dictionary<string, object> smsvkdata = smsvkjsonser.Deserialize<Dictionary<string, object>>(smsvkgetNumber);
@@ -686,8 +686,8 @@ namespace KredixLib
                         }
 
                         //[smsvk.net] Получаем номер и id
-                        string smsvk_getnumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" 
-                            + ApiKey_smsvk +"&action=getNumber&service=" + Site_Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        string smsvk_getnumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key="
+                            + ApiKey_smsvk + "&action=getNumber&service=" + Site_Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         switch (smsvk_getnumber)
                         {
@@ -819,8 +819,8 @@ namespace KredixLib
                                 break;
                         }
 
-                        string smsarea_getnumber = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" 
-                            + ApiKey_smsarea + "&action=getNumber&country=" + Operator + "&service=" + Site_Id + 
+                        string smsarea_getnumber = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key="
+                            + ApiKey_smsarea + "&action=getNumber&country=" + Operator + "&service=" + Site_Id +
                             "&count=" + count, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         switch (smsarea_getnumber)
@@ -1033,26 +1033,84 @@ namespace KredixLib
                                 break;
                         }
 
-                                //[simsms.org] Получаем баланс
-                                string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=opt4&apikey=" + ApiKey_simsms, Proxy,
-                           "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                        Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
-                        string simsms_response = simsms_data["response"].ToString();
-                        string simsms_balance = simsms_data["balance"].ToString();
-                        
-                        return simsms_balance;
+                        //[simsms.org] Получаем баланс
+                        string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + Site_Id +
+                            "&apikey=" + ApiKey_simsms, Proxy,
+                   "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        switch (simsms_getbalance)
+                        {
+                            case "API KEY не получен!":
+                                throw new Exception("Введен не верный API KEY");
+
+                            case "Недостаточно средств!":
+                                throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+
+                            case "Превышено количество попыток!":
+                                throw new Exception("Задайте больший интервал между вызовами к серверу API");
+
+                            case "Произошла неизвестная ошибка.":
+                                throw new Exception("Попробуйте повторить запрос позже");
+
+                            case "Неверный запрос.":
+                                throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+
+                            case "Произошла внутренняя ошибка сервера":
+                                throw new Exception("Попробуйте повторить запрос позже.");
+
+                            default:
+                                if (simsms_getbalance.Contains("null"))
+                                {
+                                    var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                    Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+                                    string response = simsms_data["response"].ToString();
+                                    string number = simsms_data["number"].ToString();
+                                    string id = simsms_data["id"].ToString();
+                                    string text = simsms_data["text"].ToString();
+                                    string extra = simsms_data["extra"].ToString();
+                                    string sms = simsms_data["sms"].ToString();
+
+                                    switch (response)
+                                    {
+                                        case "5":
+                                            throw new Exception("Превышено количество запросов в минуту");
+                                        case "6":
+                                            throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                                        case "7":
+                                            throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                                    }
+
+                                }
+                                break;
+
+                        }
+
+                        if (simsms_getbalance.Contains("balance"))
+                        {
+                            var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+                            string simsms_response = simsms_data["response"].ToString();
+                            string simsms_balance = simsms_data["balance"].ToString();
+                        }
+
+                        if (simsms_getbalance.Contains("error"))
+                        {
+                            var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                            Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+                            string simsms_response = simsms_data["response"].ToString();
+                            string simsms_errmes = simsms_data["error_msg"].ToString();
+                            throw new Exception(simsms_errmes);
+                        }
+
+
+
+                        return simsms_getbalance;
                     default:
                         return "Выберите правильный сервис";
                 }
             }
 
-
-
-
-
-
-
+            
           return "OK";
         }
 
