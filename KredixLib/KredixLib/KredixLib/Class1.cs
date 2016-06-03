@@ -48,7 +48,7 @@ namespace KredixLib
 
         public string getNumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
-            string ApiKey_onlinesim, out string Number, out string Id)
+            string ApiKey_onlinesim, string count, out string Number, out string Id)
         {
             Number = string.Empty;
             Id = string.Empty;
@@ -721,6 +721,107 @@ namespace KredixLib
                         string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
                                 "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
+
+                        switch (smsarea_getbalance) // Обрабатываем ошибки сервиса
+                        {
+                            case "BAD_KEY":
+                                throw new Exception("Неверный API-ключ");
+
+                            case "NO_KEY":
+                                throw new Exception("Укажите API-ключ");
+
+                            case "ERROR_SQL":
+                                throw new Exception("ошибка SQL-сервера");
+
+                            case "WRONG_SERVICE":
+                                throw new Exception("Неправильно указан сервис, который нужно активировать");
+
+                            case "NO_ACTION":
+                                throw new Exception("Не указана API-функция");
+
+                            case "BAD_ACTION":
+                                throw new Exception("Неверная API-функция");
+                        }
+
+                        //[sms-area.org] Получаем номер
+                        switch (Service_Id)
+                        {
+                            case "вконтакте":
+                                Site_Id = "vk";
+                                break;
+
+                            case "Мамба":
+                                Site_Id = "mb";
+                                break;
+
+                            case "одноклассники":
+                                Site_Id = "ok";
+                                break;
+
+                            case "4game":
+                                Site_Id = "4g";
+                                break;
+
+                            case "facebook":
+                                Site_Id = "fb";
+                                break;
+
+                            case "seosprint":
+                                Site_Id = "ss";
+                                break;
+
+                            case "instagram":
+                                Site_Id = "ig";
+                                break;
+
+                            case "webtransfer":
+                                Site_Id = "wt";
+                                break;
+
+                            case "telegram":
+                                Site_Id = "tg";
+                                break;
+
+                            case "viber":
+                                Site_Id = "vr";
+                                break;
+
+                            case "whatsupp":
+                                Site_Id = "wa";
+                                break;
+
+                            case "webmoney":
+                                Site_Id = "wm";
+                                break;
+
+                            case "qiwi":
+                                Site_Id = "qm";
+                                break;
+
+                            case "яндекс":
+                                Site_Id = "ym";
+                                break;
+
+                            case "google":
+                                Site_Id = "gm";
+                                break;
+
+                            case "ценобой":
+                                Site_Id = "cb";
+                                break;
+
+                            case "avito":
+                                Site_Id = "at";
+                                break;
+
+                            default:
+                                Site_Id = "or";
+                                break;
+                        }
+
+                        string smsarea_getnumber = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" 
+                            + ApiKey_smsarea + "&action=getNumber&country=" + Operator + "&service=" + Site_Id + 
+                            "&count=" + count, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         break;
                                                 
                     default:
