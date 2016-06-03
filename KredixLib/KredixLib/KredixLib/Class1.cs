@@ -684,8 +684,44 @@ namespace KredixLib
                                 price = "2";
                                 break;
                         }
-                        return smsvkgetNumber;
-                        
+
+                        //[sms-activate.ru] Получаем номер и id
+                        string smsvk_getnumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" 
+                            + ApiKey_smsvk +"&action=getNumber&service=" + Site_Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        switch (smsvk_getnumber)
+                        {
+                            case "BAD_KEY":
+                                throw new Exception("Неверный API-ключ");
+
+                            case "NO_KEY":
+                                throw new Exception("Укажите API-ключ");
+
+                            case "ERROR_SQL":
+                                throw new Exception("ошибка SQL-сервера");
+
+                            case "WRONG_SERVICE":
+                                throw new Exception("Неправильно указан сервис, который нужно активировать");
+
+                            default:
+                                //[sms-activate.ru] Получаем номер
+                                Number = System.Text.RegularExpressions.Regex.Replace(smsvk_getnumber, @".*:", "");
+
+                                //[sms-activate.ru] Получаем id
+                                string idtemp = System.Text.RegularExpressions.Regex.Replace(smsvk_getnumber, @"ACCESS.*?:", "");
+                                Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                                return "Получили номер и id сервиса smsvk.net";
+                        }
+
+                    //[SMS-AREA.ORG] ПОЛУЧЕНИЕ НОМЕРА
+                    case "sms-area.com":
+                        //Получение баланса smsarea.org
+                        string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
+                                "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
+                        break;
+                                                
                     default:
                         return "Выберите правильный сервис";
                 }
@@ -701,11 +737,7 @@ namespace KredixLib
             string simsms_response = simsms_data["response"].ToString();
             string simsms_balance = simsms_data["balance"].ToString();
 
-            //Получение баланса smsarea.org
-            string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
-                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-            string smsarea_balance = System.Text.RegularExpressions.Regex.Replace(smsarea_getbalance, @".*?:", "");
-            sms_services.Add(smsarea_balance);
+
 
           return "OK";
         }
