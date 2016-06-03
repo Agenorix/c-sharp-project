@@ -685,7 +685,7 @@ namespace KredixLib
                                 break;
                         }
 
-                        //[sms-activate.ru] Получаем номер и id
+                        //[smsvk.net] Получаем номер и id
                         string smsvk_getnumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" 
                             + ApiKey_smsvk +"&action=getNumber&service=" + Site_Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
@@ -715,7 +715,7 @@ namespace KredixLib
                         }
 
                     //[SMS-AREA.ORG] ПОЛУЧЕНИЕ НОМЕРА
-                    case "sms-area.com":
+                    case "sms-area.org":
 
                         //[sms-area.com] Получение баланса
                         string smsarea_getbalance = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" + ApiKey_smsarea + "&action=getBalance", Proxy,
@@ -822,7 +822,58 @@ namespace KredixLib
                         string smsarea_getnumber = ZennoPoster.HttpGet("http://sms-area.org/stubs/handler_api.php?api_key=" 
                             + ApiKey_smsarea + "&action=getNumber&country=" + Operator + "&service=" + Site_Id + 
                             "&count=" + count, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        break;
+
+                        switch (smsarea_getnumber)
+                        {
+                            case "BAD_KEY":
+                                throw new Exception("Неверный API-ключ");
+
+                            case "NO_KEY":
+                                throw new Exception("Укажите API-ключ");
+
+                            case "ERROR_SQL":
+                                throw new Exception("ошибка SQL-сервера");
+
+                            case "WRONG_SERVICE":
+                                throw new Exception("Неправильно указан сервис, который нужно активировать");
+
+                            case "NO_ACTION":
+                                throw new Exception("Не указана API-функция");
+
+                            case "NO_MEANS":
+                                throw new Exception("Недостаточно средств на счету");
+
+                            case "NO_NUMBER":
+                                throw new Exception("Нет номеров с заданными параметрами");
+
+                            case "NO_ACTIVATORS":
+                                throw new Exception("Неправильно указан сервис, который нужно активировать");
+
+                            case "NO_ACTIVATORS_OVERLOAD":
+                                throw new Exception("Все активаторы перегружены");
+
+                            case "NO_ACTIVATORS_RATE":
+                                throw new Exception("Ставка активаторов выше вашей");
+
+                            case "BAD_ACTION":
+                                throw new Exception("Неверная API-функция");
+
+                            case "BAD_SERVICE":
+                                throw new Exception("Неверный сервис");
+
+                            case "BAD_COUNTRY":
+                                throw new Exception("Неверная страна");
+
+                            default:
+                                //[sms-area.org] Получаем номер
+                                Number = System.Text.RegularExpressions.Regex.Replace(smsarea_getnumber, @".*:", "");
+
+                                //[sms-area.org] Получаем id
+                                string idtemp = System.Text.RegularExpressions.Regex.Replace(smsarea_getnumber, @"ACCESS.*?:", "");
+                                Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                                return "Получили номер и id сервиса sms-agea.org";
+                        }
                                                 
                     default:
                         return "Выберите правильный сервис";
