@@ -1033,6 +1033,8 @@ namespace KredixLib
                             "&apikey=" + ApiKey_simsms, Proxy,
                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
+                        System.Threading.Thread.Sleep(3000);
+
                         switch (simsms_getbalance)
                         {
                             case "API KEY не получен!":
@@ -1101,6 +1103,8 @@ namespace KredixLib
                         string simsms_numbercount = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_count&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&service_id=" + simsms_service_id, Proxy,
                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        System.Threading.Thread.Sleep(3000);
 
                         Regex regex = new Regex("(?<={\"response\":\"1\",\"counts ).*(?=\":)");
                         Match match = regex.Match(simsms_numbercount);
@@ -1333,11 +1337,26 @@ namespace KredixLib
                                 break;
 
                          }
-                        
+
+                        //[SIMSMS.ORG] Получаем номер
+                        string simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
+                            "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
+                            "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
 
+                        Regex regex_number = new Regex("(?<=\"number\":\").*(?=\",\"id\":)");
+                        Match match_number = regex_number.Match(simsms_getnumber);
+                        Number = Convert.ToString(match_number);
 
-                        return simsms_numbercount;
+                        Regex regex_id = new Regex("(?<=\"id\":).*(?=,\"text\")");
+                        Match match_id = regex_id.Match(simsms_getnumber);
+                        Id = Convert.ToString(match_id);
+
+                        return simsms_getnumber;
+
+                       
+
+                        //return simsms_getnumber;
                     default:
                         return "Выберите правильный сервис";
                 }
