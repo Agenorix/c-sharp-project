@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Data;
+using System.Text.RegularExpressions;
 using ZennoLab.CommandCenter;
 using ZennoLab.InterfacesLibrary;
 using ZennoLab.InterfacesLibrary.ProjectModel;
@@ -42,6 +43,7 @@ namespace KredixLib
         private string Number = string.Empty;
         private string Id = string.Empty;
         private string smsvk_balance = string.Empty;
+        string simsms_countnumber = string.Empty;
 
         //Списки
         List<string> sms_services = new List<string>();
@@ -57,6 +59,9 @@ namespace KredixLib
             string price = string.Empty;//сумма активации номера
             string smsreg_balance = string.Empty;//Баланс сервиса sms-reg.com
             string tzid = string.Empty;//id сервиса sms-reg.com
+            string simsms_service = string.Empty;
+            string simsms_service_id = string.Empty;
+
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -882,159 +887,149 @@ namespace KredixLib
                         switch (Service_Id)
                         {
                             case "вконтакте":
-                                Site_Id = "opt4";
+                                simsms_service = "opt4";
+                                simsms_service_id = "vk";
                                 break;
 
                             case "Мамба":
-                                Site_Id = "opt7";
+                                simsms_service = "opt7";
+                                simsms_service_id = "mamba";
                                 break;
 
                             case "одноклассники":
-                                Site_Id = "opt5";
+                                simsms_service = "opt5";
+                                simsms_service_id = "ok";
                                 break;
 
                             case "4game":
-                                Site_Id = "opt0";
+                                simsms_service = "opt0";
+                                simsms_service_id = "4game";
                                 break;
 
                             case "gmail":
-                                Site_Id = "opt1";
+                                simsms_service = "opt1";
+                                simsms_service_id = "gmail";
                                 break;
 
                             case "facebook":
-                                Site_Id = "opt2";
+                                simsms_service = "opt2";
+                                simsms_service_id = "fb";
                                 break;
 
                             case "spacesru":
-                                Site_Id = "opt3";
-                                break;
-
-                            case "linkedln":
-                                Site_Id = "opt8";
+                                simsms_service = "opt3";
+                                simsms_service_id = "spaces";
                                 break;
 
                             case "viber":
-                                Site_Id = "opt11";
+                                simsms_service = "opt11";
+                                simsms_service_id = "viber";
                                 break;
 
                             case "фотострана":
-                                Site_Id = "13";
+                                simsms_service = "opt13";
+                                simsms_service_id = "fotostrana";
                                 break;
 
                             case "microsoft":
-                                Site_Id = "opt15";
+                                simsms_service = "opt15";
+                                simsms_service_id = "ms";
                                 break;
 
                             case "instagram":
-                                Site_Id = "opt16";
+                                simsms_service = "opt16";
+                                simsms_service_id = "instagram";
                                 break;
 
                             case "qiwi":
-                                Site_Id = "opt18";
+                                simsms_service = "opt18";
+                                simsms_service_id = "qiwi";
                                 break;
 
                             case "whatsapp":
-                                Site_Id = "opt20";
+                                simsms_service = "opt20";
+                                simsms_service_id = "whatsapp";
                                 break;
 
                             case "webtransfer":
-                                Site_Id = "opt21";
+                                simsms_service = "opt21";
+                                simsms_service_id = "webtransfer";
                                 break;
 
                             case "seosprint":
-                                Site_Id = "opt22";
+                                simsms_service = "opt22";
+                                simsms_service_id = "seosprint";
                                 break;
 
                             case "яндекс":
-                                Site_Id = "opt23";
+                                simsms_service = "opt23";
+                                simsms_service_id = "ya";
                                 break;
 
                             case "webmoney":
-                                Site_Id = "opt24";
+                                simsms_service = "opt24";
+                                simsms_service_id = "webmoney";
                                 break;
 
                             case "nasimke":
-                                Site_Id = "opt25";
+                                simsms_service = "opt25";
+                                simsms_service_id = "nasimke";
                                 break;
 
                             case "comnu":
-                                Site_Id = "opt26";
+                                simsms_service = "opt26";
+                                simsms_service_id = "com";
                                 break;
 
                             case "dodopizzaru":
-                                Site_Id = "opt27";
+                                simsms_service = "opt27";
+                                simsms_service_id = "dodopizza";
                                 break;
 
                             case "taborru":
-                                Site_Id = "opt28";
+                                simsms_service = "opt28";
+                                simsms_service_id = "tabor";
                                 break;
 
                             case "telegram":
-                                Site_Id = "opt29";
+                                simsms_service = "opt29";
+                                simsms_service_id = "telegram";
                                 break;
 
                             case "простоквашино":
-                                Site_Id = "opt30";
+                                simsms_service = "opt30";
+                                simsms_service_id = "prostock";
                                 break;
 
                             case "другвокруг":
-                                Site_Id = "opt31";
+                                simsms_service = "opt31";
+                                simsms_service_id = "drugvokrug";
                                 break;
 
                             case "drom":
-                                Site_Id = "opt32";
+                                simsms_service = "opt32";
+                                simsms_service_id = "drom";
                                 break;
 
                             case "mailru":
-                                Site_Id = "opt33";
-                                break;
-
-                            case "ценобой":
-                                Site_Id = "opt34";
-                                break;
-
-                            case "gettaxi":
-                                Site_Id = "opt35";
-                                break;
-
-                            case "vkserfing":
-                                Site_Id = "opt37";
-                                break;
-
-                            case "avtoru":
-                                Site_Id = "opt38";
-                                break;
-
-                            case "like4u":
-                                Site_Id = "opt39";
-                                break;
-
-                            case "voxoxcom":
-                                Site_Id = "opt40";
+                                simsms_service = "opt33";
+                                simsms_service_id = "mail";
                                 break;
 
                             case "twitter":
-                                Site_Id = "opt41";
+                                simsms_service = "opt41";
+                                simsms_service_id = "twitter";
                                 break;
 
                             case "avito":
-                                Site_Id = "opt59";
+                                simsms_service = "opt59";
+                                simsms_service_id = "avito";
                                 break;
 
-                            case "mastercard":
-                                Site_Id = "opt71";
-                                break;
-
-                            case "premiaruneta":
-                                Site_Id = "opt72";
-                                break;
-                            case "gem4me":
-                                Site_Id = "opt76";
-                                break;
-                        }
+                       }
 
                         //[simsms.org] Получаем баланс
-                        string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + Site_Id +
+                        string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms, Proxy,
                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
@@ -1102,9 +1097,247 @@ namespace KredixLib
                             throw new Exception(simsms_errmes);
                         }
 
+                        //[simsms.org] //Получаем количество свободных номеров
+                        string simsms_numbercount = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_count&service=" + simsms_service +
+                            "&apikey=" + ApiKey_simsms + "&service_id=" + simsms_service_id, Proxy,
+                   "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        Regex regex = new Regex("(?<={\"response\":\"1\",\"counts ).*(?=\":)");
+                        Match match = regex.Match(simsms_numbercount);
+
+                        
+                        switch (Convert.ToString(match))
+                        {
+                            case "Vkontakte":
+                                var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_response = simsms_data["response"].ToString();
+                                string simsms_countnumber = simsms_data["counts Vkontakte"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Мамба":
+                                var simsms_mamba_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_mamba_data = simsms_mamba_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_mamba_response = simsms_mamba_data["response"].ToString();
+                                string simsms_mamba_countnumber = simsms_mamba_data["counts Mamba"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Odnoklassniki":
+                                var simsms_ok_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ok_data = simsms_ok_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ok_response = simsms_ok_data["response"].ToString();
+                                string simsms_ok_countnumber = simsms_ok_data["counts Odnoklassniki"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "4GAME":
+                                var simsms_4g_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_4g_data = simsms_4g_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_4g_response = simsms_4g_data["response"].ToString();
+                                string simsms_4g_countnumber = simsms_4g_data["counts 4GAME"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Gmail":
+                                var simsms_gm_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_gm_data = simsms_gm_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_gm_response = simsms_gm_data["response"].ToString();
+                                string simsms_gm_countnumber = simsms_gm_data["counts Gmail"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "FaceBook":
+                                var simsms_fb_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_fb_data = simsms_fb_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_fb_response = simsms_fb_data["response"].ToString();
+                                string simsms_fb_countnumber = simsms_fb_data["counts FaceBook"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "spaces":
+                                var simsms_sp_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_sp_data = simsms_sp_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_sp_response = simsms_sp_data["response"].ToString();
+                                string simsms_sp_countnumber = simsms_sp_data["counts spaces"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "":
+                                var simsms_vb_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_vb_data = simsms_vb_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_vb_response = simsms_vb_data["response"].ToString();
+                                string simsms_vb_countnumber = simsms_vb_data["counts"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Fotostrana":
+                                var simsms_fs_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_fs_data = simsms_fs_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_fs_response = simsms_fs_data["response"].ToString();
+                                string simsms_fs_countnumber = simsms_fs_data["counts Fotostrana"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "MS":
+                                var simsms_ms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ms_data = simsms_ms_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ms_response = simsms_ms_data["response"].ToString();
+                                string simsms_ms_countnumber = simsms_ms_data["counts MS"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Instagram":
+                                var simsms_ig_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ig_data = simsms_ig_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ig_response = simsms_ig_data["response"].ToString();
+                                string simsms_ig_countnumber = simsms_ig_data["counts Instagram"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Qiwi":
+                                var simsms_qw_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_qw_data = simsms_qw_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_qw_response = simsms_qw_data["response"].ToString();
+                                string simsms_qw_countnumber = simsms_qw_data["counts Qiwi"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Whatsapp":
+                                var simsms_wa_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_wa_data = simsms_wa_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_wa_response = simsms_wa_data["response"].ToString();
+                                string simsms_wa_countnumber = simsms_wa_data["counts Whatsapp"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "WEBTrasfer":
+                                var simsms_wt_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_wt_data = simsms_wt_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_wt_response = simsms_wt_data["response"].ToString();
+                                string simsms_wt_countnumber = simsms_wt_data["counts Vkontakte"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "SEOSprint":
+                                var simsms_ss_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ss_data = simsms_ss_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ss_response = simsms_ss_data["response"].ToString();
+                                string simsms_ss_countnumber = simsms_ss_data["counts SEOSprint"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Yandex":
+                                var simsms_ya_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ya_data = simsms_ya_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ya_response = simsms_ya_data["response"].ToString();
+                                string simsms_ya_countnumber = simsms_ya_data["counts Yandex"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Webmoney":
+                                var simsms_wm_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_wm_data = simsms_wm_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_wm_response = simsms_wm_data["response"].ToString();
+                                string simsms_wm_countnumber = simsms_wm_data["counts Webmoney"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Nasimke":
+                                var simsms_ns_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ns_data = simsms_ns_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ns_response = simsms_ns_data["response"].ToString();
+                                string simsms_ns_countnumber = simsms_ns_data["counts Nasimke"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Com":
+                                var simsms_cm_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_cm_data = simsms_cm_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_cm_response = simsms_cm_data["response"].ToString();
+                                string simsms_cm_countnumber = simsms_cm_data["counts Com"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Dodopizza":
+                                var simsms_dd_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_dd_data = simsms_dd_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_dd_response = simsms_dd_data["response"].ToString();
+                                string simsms_dd_countnumber = simsms_dd_data["counts Dodopizza"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Twitter":
+                                var simsms_tw_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_tw_data = simsms_tw_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_tw_response = simsms_tw_data["response"].ToString();
+                                string simsms_tw_countnumber = simsms_tw_data["counts Twitter"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Avito":
+                                var simsms_av_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_av_data = simsms_av_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_av_response = simsms_av_data["response"].ToString();
+                                string simsms_av_countnumber = simsms_av_data["counts Avito"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Tabor":
+                                var simsms_tb_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_tb_data = simsms_tb_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_tb_response = simsms_tb_data["response"].ToString();
+                                string simsms_tb_countnumber = simsms_tb_data["counts Tabor"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Telegram":
+                                var simsms_tg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_tg_data = simsms_tg_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_tg_response = simsms_tg_data["response"].ToString();
+                                string simsms_tg_countnumber = simsms_tg_data["counts Telegram"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Prostock":
+                                var simsms_pr_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_pr_data = simsms_pr_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_pr_response = simsms_pr_data["response"].ToString();
+                                string simsms_pr_countnumber = simsms_pr_data["counts Prostock"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "DrugVokrug":
+                                var simsms_dv_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_dv_data = simsms_dv_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_dv_response = simsms_dv_data["response"].ToString();
+                                string simsms_dv_countnumber = simsms_dv_data["counts DrugVokrug"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Drom":
+                                var simsms_dr_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_dr_data = simsms_dr_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_dr_response = simsms_dr_data["response"].ToString();
+                                string simsms_dr_countnumber = simsms_dr_data["counts Drom"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                            case "Mail":
+                                var simsms_ml_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                Dictionary<string, object> simsms_ml_data = simsms_ml_jsonser.Deserialize<Dictionary<string, object>>(simsms_numbercount);
+                                string simsms_ml_response = simsms_ml_data["response"].ToString();
+                                string simsms_ml_countnumber = simsms_ml_data["counts Mail"].ToString();
+                                // return simsms_countnumber;
+                                break;
+
+                         }
+                        
 
 
-                        return simsms_getbalance;
+
+                        return simsms_numbercount;
                     default:
                         return "Выберите правильный сервис";
                 }
