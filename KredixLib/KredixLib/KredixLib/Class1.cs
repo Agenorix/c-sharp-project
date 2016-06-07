@@ -60,6 +60,7 @@ namespace KredixLib
             string smsreg_balance = string.Empty;//Баланс сервиса sms-reg.com
             string tzid = string.Empty;//id сервиса sms-reg.com
             string simsms_service = string.Empty;
+            string response_sm = string.Empty;
             string simsms_service_id = string.Empty;
 
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
@@ -1343,16 +1344,42 @@ namespace KredixLib
                             "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
                             "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
+                        for (int sims = 0; sims<10; sims++)
+                        {
+                            Regex regex_response = new Regex("(?<={\"response\":\").*(?=\",\"number\":\")");
+                            Match match_response = regex_response.Match(simsms_getnumber);
+                            response_sm = Convert.ToString(match_response);
 
-                        Regex regex_number = new Regex("(?<=\"number\":\").*(?=\",\"id\":)");
-                        Match match_number = regex_number.Match(simsms_getnumber);
-                        Number = Convert.ToString(match_number);
+                            switch (response_sm)
+                            {
+                                case "1":
+                                    Regex regex_number = new Regex("(?<=\"number\":\").*(?=\",\"id\":)");
+                                    Match match_number = regex_number.Match(simsms_getnumber);
+                                    Number = Convert.ToString(match_number);
 
-                        Regex regex_id = new Regex("(?<=\"id\":).*(?=,\"text\")");
-                        Match match_id = regex_id.Match(simsms_getnumber);
-                        Id = Convert.ToString(match_id);
+                                    Regex regex_id = new Regex("(?<=\"id\":).*(?=,\"text\")");
+                                    Match match_id = regex_id.Match(simsms_getnumber);
+                                    Id = Convert.ToString(match_id);
 
-                        return simsms_getnumber;
+                                    return "ПОлучили номер в сервисе simsms.org";
+
+                                case "2":
+                                    System.Threading.Thread.Sleep(30000);
+                                    simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
+                                        "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
+                                       "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                    break;
+
+                                case "error":
+                                    //тут функция обработки ошибок;
+                                    break;
+
+                            }
+
+                        }
+                        
+
+                        return response_sm;
 
                        
 
