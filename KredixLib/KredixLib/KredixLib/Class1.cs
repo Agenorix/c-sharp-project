@@ -48,6 +48,49 @@ namespace KredixLib
         //Списки
         List<string> sms_services = new List<string>();
 
+        //Функция обработки ошибок simsms.org
+        public void simsmserror (string get)
+        {
+            switch (get)
+            {
+                case "API KEY не получен!":
+                    throw new Exception("Введен не верный API KEY");
+                case "Недостаточно средств!":
+                    throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+                case "Превышено количество попыток!":
+                    throw new Exception("Задайте больший интервал между вызовами к серверу API");
+                case "Произошла неизвестная ошибка.":
+                    throw new Exception("Попробуйте повторить запрос позже");
+                case "Неверный запрос.":
+                    throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+                case "Произошла внутренняя ошибка сервера":
+                    throw new Exception("Попробуйте повторить запрос позже.");
+                default:
+                    if (get.Contains("null"))
+                    {
+                        var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                        Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(get);
+                        string response = simsms_data["response"].ToString();
+                        string number = simsms_data["number"].ToString();
+                        string id = simsms_data["id"].ToString();
+                        string text = simsms_data["text"].ToString();
+                        string extra = simsms_data["extra"].ToString();
+                        string sms = simsms_data["sms"].ToString();
+
+                        switch (response)
+                        {
+                            case "5":
+                                throw new Exception("Превышено количество запросов в минуту");
+                            case "6":
+                                throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                            case "7":
+                                throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                        }
+                    }
+                    break;
+            }
+            }
+
         public string getNumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
             string ApiKey_onlinesim, string count, out string Number, out string Id)
@@ -62,7 +105,6 @@ namespace KredixLib
             string simsms_service = string.Empty;
             string response_sm = string.Empty;
             string simsms_service_id = string.Empty;
-
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
             for (int i=0;i<arrServices.Length; i++)
@@ -93,156 +135,130 @@ namespace KredixLib
                                 servicebalance = data["vk_0"].ToString();
                                 price = "9";
                                 break;
-
                             case "одноклассники":
                                 Site_Id = "ok";
                                 servicebalance = data["ok_0"].ToString();
                                 price = "5";
                                 break;
-
                             case "whatsapp":
                                 Site_Id = "wa";
                                 servicebalance = data["wa_0"].ToString();
                                 price = "6";
                                 break;
-
                             case "viber":
                                 Site_Id = "vi";
                                 servicebalance = data["vi_0"].ToString();
                                 price = "3";
                                 break;
-
                             case "telegram":
                                 Site_Id = "tg";
                                 servicebalance = data["tg_0"].ToString();
                                 price = "3";
                                 break;
-
                             case "periscope":
                                 Site_Id = "wb";
                                 servicebalance = data["wb_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "gmail":
                                 Site_Id = "go";
                                 servicebalance = data["go_0"].ToString();
                                 price = "3";
                                 break;
-
                             case "avito":
                                 Site_Id = "av";
                                 servicebalance = data["av_0"].ToString();
                                 price = "4";
                                 break;
-
                             case "avito_1":
                                 Site_Id = "av_1";
                                 servicebalance = data["av_1"].ToString();
                                 price = "30";
                                 break;
-
                             case "facebook":
                                 Site_Id = "fb";
                                 servicebalance = data["fb_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "twitter":
                                 Site_Id = "tw";
                                 servicebalance = data["tw_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "Taxi2412":
                                 Site_Id = "ub";
                                 servicebalance = data["ub_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "qiwi":
                                 Site_Id = "qw";
                                 servicebalance = data["qw_0"].ToString();
                                 price = "6";
                                 break;
-
                             case "gett":
                                 Site_Id = "gt";
                                 servicebalance = data["gt_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "webmoney":
                                 Site_Id = "sn";
                                 servicebalance = data["sn_0"].ToString();
                                 price = "4";
                                 break;
-
                             case "instagram":
                                 Site_Id = "ig";
                                 servicebalance = data["ig_0"].ToString();
                                 price = "5";
                                 break;
-
                             case "seosprint":
                                 Site_Id = "ss";
                                 servicebalance = data["ss_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "alibaba":
                                 Site_Id = "ym";
                                 servicebalance = data["ym_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "яндекс":
                                 Site_Id = "ya";
                                 servicebalance = data["ya_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "taobao":
                                 Site_Id = "ma";
                                 servicebalance = data["ma_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "microsoft":
                                 Site_Id = "mm";
                                 servicebalance = data["mm_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "datingru":
                                 Site_Id = "uk";
                                 servicebalance = data["uk_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "gem4me":
                                 Site_Id = "me";
                                 servicebalance = data["me_0"].ToString();
                                 price = "2";
                                 break;
-
                             case "yahoo":
                                 Site_Id = "mb";
                                 servicebalance = data["mb_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "aol":
                                 Site_Id = "we";
                                 servicebalance = data["we_0"].ToString();
                                 price = "1";
                                 break;
-
                             case "ot_1":
                                 servicebalance = data["ot_1"].ToString();
                                 price = "30";
                                 break;
-
                             default:
                                 Site_Id = "ot";
                                 servicebalance = data["ot_0"].ToString();
@@ -264,16 +280,12 @@ namespace KredixLib
                         {
                             case "BAD_KEY":
                                 throw new Exception("Неверный API-ключ");
-
                             case "NO_KEY":
                                 throw new Exception("Укажите API-ключ");
-
                             case "ERROR_SQL":
                                 throw new Exception("ошибка SQL-сервера");
-
                             case "WRONG_SERVICE":
                                 throw new Exception("Неправильно указан сервис, который нужно активировать");
-
                             default:
                                 //[sms-activate.ru] Получаем номер
                                 Number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
@@ -289,7 +301,6 @@ namespace KredixLib
                         //[sms-reg.com] Получаем баланс
                         string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
-
                         if (smsreg_getbalance.Contains("ERROR"))
                         {
                             var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -301,10 +312,8 @@ namespace KredixLib
                             {
                                 case "ERROR_NO_KEY":
                                     throw new Exception("Укажите ApiKey сервиса sms-reg.com. И проверьте сразу ключи остальных сервисов :)");
-
                                 case "ERROR_WRONG_KEY":
                                     throw new Exception("Указан неверный ключ API сервиса sms-reg.com");
-
                                 case "ERROR_KEY_NEED_CHANGE":
                                     throw new Exception("Требует замены ключ API сервиса sms-reg.com");
                             }
@@ -326,117 +335,94 @@ namespace KredixLib
                                 Site_Id = "4game";
                                 price = "3.00";
                                 break;
-
                             case "gmail":
                                 Site_Id = "gmail";
                                 price = "4.00";
                                 break;
-
                             case "facebook":
                                 Site_Id = "facebook";
                                 price = "3.00";
                                 break;
-
                             case "mailru":
                                 Site_Id = "mailru";
                                 price = "3.00";
                                 break;
-
                             case "ВКонтакте":
                                 Site_Id = "vk";
                                 price = "14.00";
                                 break;
-
                             case "Одноклассники":
                                 Site_Id = "classmates";
                                 price = "7.00";
                                 break;
-
                             case "twitter":
                                 Site_Id = "twitter";
                                 price = "3.00";
                                 break;
-
                             case "mamba":
                                 Site_Id = "mamba";
                                 price = "3.00";
                                 break;
-
                             case "loveplanet":
                                 Site_Id = "loveplanet";
                                 price = "3.00";
                                 break;
-
                             case "telegram":
                                 Site_Id = "telegram";
                                 price = "3.00";
                                 break;
-
                             case "badoo":
                                 Site_Id = "badoo";
                                 price = "3.00";
                                 break;
-
                             case "drugvokrug":
                                 Site_Id = "drugvokrug";
                                 price = "3.00";
                                 break;
-
                             case "avito":
                                 Site_Id = "avito";
                                 price = "3.00";
                                 break;
-
                             case "wabos":
                                 Site_Id = "wabos";
                                 price = "3.00";
                                 break;
-
                             case "steam":
                                 Site_Id = "steam";
                                 price = "3.00";
                                 break;
-
                             case "fotostrana":
                                 Site_Id = "fotostrana";
                                 price = "3.00";
                                 break;
-
                             case "hosting":
                                 Site_Id = "hosting";
                                 price = "3.00";
                                 break;
-
                             case "viber":
                                 Site_Id = "Viber";
                                 price = "3.00";
                                 break;
-
                             case "whatsapp":
                                 Site_Id = "whatsapp";
                                 price = "3.00";
                                 break;
-
                             case "tabor":
                                 Site_Id = "tabor";
                                 price = "3.00";
                                 break;
-
                             case "seosprint":
                                 Site_Id = "seosprint";
                                 price = "3.00";
                                 break;
-
                             case "instagram":
                                 Site_Id = "instagram";
                                 price = "3.00";
                                 break;
-
                             case "matroskin":
                                 Site_Id = "matroskin";
                                 price = "3.00";
                                 break;
-
                             default:
                                 Site_Id = "other";
                                 price = "4.00";
@@ -462,10 +448,8 @@ namespace KredixLib
                             {
                                 case "Service not define":
                                     throw new Exception("В сервисе sms-reg.com не определен сервис");
-
                                 case "WARNING_LOW_BALANCE":
                                     throw new Exception("В сервисе sms-reg.com недостаточно денег на счету");
-
                                 case "Wrong characters in parameters":
                                     throw new Exception("В сервисе sms-reg.com недопустимые символы в передаваемых данных");
                             }
@@ -539,79 +523,66 @@ namespace KredixLib
                                 servicebalance = smsvkdata["vk"].ToString();
                                 price = "8";
                                 break;
-
                             case "одноклассники":
                                 Site_Id = "ok";
                                 servicebalance = smsvkdata["ok"].ToString();
                                 price = "5";
                                 break;
-
                             case "whatsapp":
                                 Site_Id = "wa";
                                 servicebalance = smsvkdata["wa"].ToString();
                                 price = "10";
                                 break;
-
                             case "viber":
                                 Site_Id = "vb";
                                 servicebalance = smsvkdata["vb"].ToString();
                                 price = "6";
                                 break;
-
                             case "telegram":
                                 Site_Id = "tg";
                                 servicebalance = smsvkdata["tg"].ToString();
                                 price = "3";
                                 break;
-
                             case "periscope":
                                 Site_Id = "ps";
                                 servicebalance = smsvkdata["ps"].ToString();
                                 price = "1";
                                 break;
-
                             case "gmail":
                                 Site_Id = "gg";
                                 servicebalance = smsvkdata["gg"].ToString();
                                 price = "2";
                                 break;
-
                             case "avito":
                                 Site_Id = "av";
                                 servicebalance = smsvkdata["av"].ToString();
                                 price = "3";
                                 break;
-
                             case "facebook":
                                 Site_Id = "fb";
                                 servicebalance = smsvkdata["fb"].ToString();
                                 price = "2";
                                 break;
-
                             case "twitter":
                                 Site_Id = "tw";
                                 servicebalance = smsvkdata["tw"].ToString();
                                 price = "2";
                                 break;
-
                             case "qiwi":
                                 Site_Id = "qw";
                                 servicebalance = smsvkdata["qw"].ToString();
                                 price = "6";
                                 break;
-
                             case "gett":
                                 Site_Id = "gt";
                                 servicebalance = smsvkdata["gt"].ToString();
                                 price = "1";
                                 break;
-
                             case "instagram":
                                 Site_Id = "ig";
                                 servicebalance = smsvkdata["ig_0"].ToString();
                                 price = "5";
                                 break;
-
                             case "яндекс":
                                 Site_Id = "ya";
                                 servicebalance = smsvkdata["ya"].ToString();
@@ -1036,52 +1007,7 @@ namespace KredixLib
 
                         System.Threading.Thread.Sleep(3000);
 
-                        switch (simsms_getbalance)
-                        {
-                            case "API KEY не получен!":
-                                throw new Exception("Введен не верный API KEY");
-
-                            case "Недостаточно средств!":
-                                throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
-
-                            case "Превышено количество попыток!":
-                                throw new Exception("Задайте больший интервал между вызовами к серверу API");
-
-                            case "Произошла неизвестная ошибка.":
-                                throw new Exception("Попробуйте повторить запрос позже");
-
-                            case "Неверный запрос.":
-                                throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
-
-                            case "Произошла внутренняя ошибка сервера":
-                                throw new Exception("Попробуйте повторить запрос позже.");
-
-                            default:
-                                if (simsms_getbalance.Contains("null"))
-                                {
-                                    var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                                    Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
-                                    string response = simsms_data["response"].ToString();
-                                    string number = simsms_data["number"].ToString();
-                                    string id = simsms_data["id"].ToString();
-                                    string text = simsms_data["text"].ToString();
-                                    string extra = simsms_data["extra"].ToString();
-                                    string sms = simsms_data["sms"].ToString();
-
-                                    switch (response)
-                                    {
-                                        case "5":
-                                            throw new Exception("Превышено количество запросов в минуту");
-                                        case "6":
-                                            throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
-                                        case "7":
-                                            throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
-                                    }
-
-                                }
-                                break;
-
-                        }
+                        simsmserror(simsms_getbalance);
 
                         if (simsms_getbalance.Contains("balance"))
                         {
@@ -1371,15 +1297,12 @@ namespace KredixLib
                                     break;
 
                                 case "error":
-                                    //тут функция обработки ошибок;
+                                    simsmserror(simsms_getnumber);
                                     break;
-
                             }
 
                         }
-                        
-
-                        return response_sm;
+                         return response_sm;
 
                        
 
