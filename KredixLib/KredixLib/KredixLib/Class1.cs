@@ -42,6 +42,8 @@ namespace KredixLib
         private string Operator = string.Empty;
         private string Number = string.Empty;
         private string Id = string.Empty;
+        private string ServiceWork = string.Empty;
+        private string ApiWork = string.Empty;
         private string smsvk_balance = string.Empty;
         string simsms_countnumber = string.Empty;
 
@@ -93,10 +95,12 @@ namespace KredixLib
 
         public string getNumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
-            string ApiKey_onlinesim, string count, out string Number, out string Id)
+            string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
         {
             Number = string.Empty;
             Id = string.Empty;
+            ServiceWork = string.Empty;
+            ApiWork = string.Empty;
             string servicebalance = string.Empty;//Баланс сервисов активации
             string Site_Id = string.Empty;//Id сайтов в разных сервисах активации
             string price = string.Empty;//сумма активации номера
@@ -294,6 +298,10 @@ namespace KredixLib
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
 
+                                ServiceWork = "sms-activate.ru";
+                                ApiWork = ApiKey_smsactivate;
+
+
                                 return "Получили номер и id сервиса sms-activate";
                         }
 
@@ -477,6 +485,8 @@ namespace KredixLib
                                 Number = getState_data["number"].ToString();
                                 Site_Id = getState_data["service"].ToString();
                                 Id = tzid;
+                                ServiceWork = "sms-reg.com";
+                                ApiWork = ApiKey_smsreg;
                                 return "OK";
                             }
                             else
@@ -688,6 +698,9 @@ namespace KredixLib
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(smsvk_getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
 
+                                ServiceWork = "smsvk.net";
+                                ApiWork = ApiKey_smsvk;
+
                                 return "Получили номер и id сервиса smsvk.net";
                         }
 
@@ -848,6 +861,9 @@ namespace KredixLib
                                 //[sms-area.org] Получаем id
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(smsarea_getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+
+                                ServiceWork = "sms-area.org";
+                                ApiWork = ApiKey_smsarea;
 
                                 return "Получили номер и id сервиса sms-agea.org";
                         }
@@ -1287,6 +1303,9 @@ namespace KredixLib
                                     Match match_id = regex_id.Match(simsms_getnumber);
                                     Id = Convert.ToString(match_id);
 
+                                    ServiceWork = "simsms.org";
+                                    ApiKey_smsarea = ApiKey_simsms;
+
                                     return "ПОлучили номер в сервисе simsms.org";
 
                                 case "2":
@@ -1303,17 +1322,33 @@ namespace KredixLib
 
                         }
                          return response_sm;
-
-                       
-
-                        //return simsms_getnumber;
-                    default:
+                        default:
                         return "Выберите правильный сервис";
                 }
             }
-
-            
           return "OK";
+        }
+
+        public string getsms (string ServiceWork, string ApiWork, string Proxy, string Number, string Id)
+        {
+            switch (ServiceWork)
+            {
+                case "sms-activate.ru":
+                    break;
+
+                case "sms-reg.com":
+                    break;
+
+                case "smsvk.net":
+                    break;
+
+                case "sms-area.org":
+                    break;
+
+                case "simsms.org":
+                    break;
+            }
+            return "OK";
         }
 
     }
