@@ -51,7 +51,7 @@ namespace KredixLib
         List<string> sms_services = new List<string>();
 
         //Функция обработки ошибок simsms.org
-        private void simsmserror (string get)
+        private void simsmserror(string get)
         {
             switch (get)
             {
@@ -91,9 +91,9 @@ namespace KredixLib
                     }
                     break;
             }
-            }
+        }
 
-        public string getnumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
+        public string getnumber(string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate,
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
             string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
         {
@@ -104,14 +104,12 @@ namespace KredixLib
             string servicebalance = string.Empty;//Баланс сервисов активации
             string Site_Id = string.Empty;//Id сайтов в разных сервисах активации
             string price = string.Empty;//сумма активации номера
-            string smsreg_balance = string.Empty;//Баланс сервиса sms-reg.com
-            string tzid = string.Empty;//id сервиса sms-reg.com
             string simsms_service = string.Empty;
             string response_sm = string.Empty;
             string simsms_service_id = string.Empty;
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
 
-            for (int i=0;i<arrServices.Length; i++)
+            for (int i = 0; i < arrServices.Length; i++)
             {
                 string service = arrServices[i];
                 switch (service)
@@ -305,198 +303,7 @@ namespace KredixLib
                                 return "Получили номер и id сервиса sms-activate";
                         }
 
-                    case "sms-reg.com":
-                        //[sms-reg.com] Получаем баланс
-                        string smsreg_getbalance = ZennoPoster.HttpGet("http://api.sms-reg.com/getBalance.php?apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-
-                        if (smsreg_getbalance.Contains("ERROR"))
-                        {
-                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
-                            string smsreg_response = smsreg_data["response"].ToString();
-                            string smsreg_error = smsreg_data["error_msg"].ToString();
-
-                            switch (smsreg_error)
-                            {
-                                case "ERROR_NO_KEY":
-                                    throw new Exception("Укажите ApiKey сервиса sms-reg.com. И проверьте сразу ключи остальных сервисов :)");
-                                case "ERROR_WRONG_KEY":
-                                    throw new Exception("Указан неверный ключ API сервиса sms-reg.com");
-                                case "ERROR_KEY_NEED_CHANGE":
-                                    throw new Exception("Требует замены ключ API сервиса sms-reg.com");
-                            }
-                        }
-                        else
-                        {
-                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(smsreg_getbalance);
-                            string smsreg_response = smsreg_data["response"].ToString();
-                            smsreg_balance = smsreg_data["balance"].ToString();
-                        }
-
-                        //[SMS-REG.COM] ПОЛУЧАЕМ НОМЕР
-
-                        //[sms-reg.com] Создаем операцию на использование номера
-                        switch (Service_Id)
-                        {
-                            case "4game":
-                                Site_Id = "4game";
-                                price = "3.00";
-                                break;
-                            case "gmail":
-                                Site_Id = "gmail";
-                                price = "4.00";
-                                break;
-                            case "facebook":
-                                Site_Id = "facebook";
-                                price = "3.00";
-                                break;
-                            case "mailru":
-                                Site_Id = "mailru";
-                                price = "3.00";
-                                break;
-                            case "ВКонтакте":
-                                Site_Id = "vk";
-                                price = "14.00";
-                                break;
-                            case "Одноклассники":
-                                Site_Id = "classmates";
-                                price = "7.00";
-                                break;
-                            case "twitter":
-                                Site_Id = "twitter";
-                                price = "3.00";
-                                break;
-                            case "mamba":
-                                Site_Id = "mamba";
-                                price = "3.00";
-                                break;
-                            case "loveplanet":
-                                Site_Id = "loveplanet";
-                                price = "3.00";
-                                break;
-                            case "telegram":
-                                Site_Id = "telegram";
-                                price = "3.00";
-                                break;
-                            case "badoo":
-                                Site_Id = "badoo";
-                                price = "3.00";
-                                break;
-                            case "drugvokrug":
-                                Site_Id = "drugvokrug";
-                                price = "3.00";
-                                break;
-                            case "avito":
-                                Site_Id = "avito";
-                                price = "3.00";
-                                break;
-                            case "wabos":
-                                Site_Id = "wabos";
-                                price = "3.00";
-                                break;
-                            case "steam":
-                                Site_Id = "steam";
-                                price = "3.00";
-                                break;
-                            case "fotostrana":
-                                Site_Id = "fotostrana";
-                                price = "3.00";
-                                break;
-                            case "hosting":
-                                Site_Id = "hosting";
-                                price = "3.00";
-                                break;
-                            case "viber":
-                                Site_Id = "Viber";
-                                price = "3.00";
-                                break;
-                            case "whatsapp":
-                                Site_Id = "whatsapp";
-                                price = "3.00";
-                                break;
-                            case "tabor":
-                                Site_Id = "tabor";
-                                price = "3.00";
-                                break;
-                            case "seosprint":
-                                Site_Id = "seosprint";
-                                price = "3.00";
-                                break;
-                            case "instagram":
-                                Site_Id = "instagram";
-                                price = "3.00";
-                                break;
-                            case "matroskin":
-                                Site_Id = "matroskin";
-                                price = "3.00";
-                                break;
-                            default:
-                                Site_Id = "other";
-                                price = "4.00";
-                                break;
-                        }
-
-                        /*
-                        if (double.Parse(smsreg_balance) == 0.00 || double.Parse(price) > double.Parse(smsreg_balance))
-                            {
-                            return "smsreg пуст";
-                            }
-                            */
-
-                        string getnum = ZennoPoster.HttpGet("http://api.sms-reg.com/getNum.php?country=ru&service=" + Site_Id + "&apikey=" + ApiKey_smsreg, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        if (smsreg_getbalance.Contains("ERROR"))
-                        {
-                            var smsreg_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                            Dictionary<string, object> smsreg_data = smsreg_jsonser.Deserialize<Dictionary<string, object>>(getnum);
-                            string smsreg_response = smsreg_data["response"].ToString();
-                            string smsreg_error = smsreg_data["error_msg"].ToString();
-
-                            switch (smsreg_error)
-                            {
-                                case "Service not define":
-                                    throw new Exception("В сервисе sms-reg.com не определен сервис");
-                                case "WARNING_LOW_BALANCE":
-                                    throw new Exception("В сервисе sms-reg.com недостаточно денег на счету");
-                                case "Wrong characters in parameters":
-                                    throw new Exception("В сервисе sms-reg.com недопустимые символы в передаваемых данных");
-                            }
-                        }
-                        else
-                        {
-                            var getnum_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                            Dictionary<string, object> getnum_data = getnum_jsonser.Deserialize<Dictionary<string, object>>(getnum);
-                            string response = getnum_data["response"].ToString();
-                            tzid = getnum_data["tzid"].ToString();
-                        }
-
-                        //Получаем номер в сервисе sms-reg.com
-
-                        string getState = ZennoPoster.HttpGet("http://api.sms-reg.com/getState.php?tzid=" + tzid + "&apikey=" + ApiKey_smsreg,
-                            Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-
-                        for (int gs = 0; gs < 60; gs++)
-                        {
-                            if (getState.Contains("TZ_NUM_PREPARE"))
-                            {
-                                var getStatejson = new System.Web.Script.Serialization.JavaScriptSerializer();
-                                Dictionary<string, object> getState_data = getStatejson.Deserialize<Dictionary<string, object>>(getState);
-                                string response = getState_data["response"].ToString();
-                                Number = getState_data["number"].ToString();
-                                Site_Id = getState_data["service"].ToString();
-                                Id = tzid;
-                                ServiceWork = "sms-reg.com";
-                                ApiWork = ApiKey_smsreg;
-                                return "OK";
-                            }
-                            else
-                            {
-                                System.Threading.Thread.Sleep(1000);
-                                getState = ZennoPoster.HttpGet("http://api.sms-reg.com/getState.php?tzid=" + tzid + "&apikey=" + ApiKey_smsreg,
-                                    Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                            }
-                        }
-                        break;
+                     
 
                     //[SMSVK.NET] ПОЛУЧАЕМ НОМЕР
 
@@ -1014,7 +821,7 @@ namespace KredixLib
                                 simsms_service_id = "avito";
                                 break;
 
-                       }
+                        }
 
                         //[simsms.org] Получаем баланс
                         string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + simsms_service +
@@ -1052,7 +859,7 @@ namespace KredixLib
                         Regex regex = new Regex("(?<={\"response\":\"1\",\"counts ).*(?=\":)");
                         Match match = regex.Match(simsms_numbercount);
 
-                        
+
                         switch (Convert.ToString(match))
                         {
                             case "Vkontakte":
@@ -1279,14 +1086,14 @@ namespace KredixLib
                                 // return simsms_countnumber;
                                 break;
 
-                         }
+                        }
 
                         //[SIMSMS.ORG] Получаем номер
                         string simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
                             "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
-                        for (int sims = 0; sims<10; sims++)
+                        for (int sims = 0; sims < 10; sims++)
                         {
                             Regex regex_response = new Regex("(?<={\"response\":\").*(?=\",\"number\":\")");
                             Match match_response = regex_response.Match(simsms_getnumber);
@@ -1321,16 +1128,16 @@ namespace KredixLib
                             }
 
                         }
-                         return response_sm;
-                        default:
+                        return response_sm;
+                    default:
                         return "Выберите правильный сервис";
                 }
             }
-          return "OK";
+            return "OK";
         }
 
         //ФУНКЦИЯ ПОЛУЧЕНИЯ SMS КОДА
-        public string getsms (string ServiceWork, string ApiWork, string Proxy, string Id)
+        public string getsms(string ServiceWork, string ApiWork, string Proxy, string Id)
         {
             switch (ServiceWork)
             {
@@ -1344,43 +1151,40 @@ namespace KredixLib
                     {
                         case "ACCESS_READY":
                             for (int i = 0; i < 16; i++)
-                        {
-                        smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
-                                    "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                        if (smsstatus.Contains("STATUS_OK"))
-                        {
-                            sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
-                            return sms;
-                        }
-                        else
-                        {
-                            System.Threading.Thread.Sleep(60000);
-                        }
+                            {
+                                smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                                            "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                if (smsstatus.Contains("STATUS_OK"))
+                                {
+                                    sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
+                                    return sms;
+                                }
+                                else
+                                {
+                                    System.Threading.Thread.Sleep(60000);
+                                }
+                            }
+                            break;
+
+                        case "ACCESS_ACTIVATION":
+                            return "Номер успешно подтверждён";
+                        case "STATUS_CANCEL":
+                            throw new Exception("Истёк срок ожидания прихода смс");
+                        case "ERROR_SQL":
+                            throw new Exception("Ошибка SQL-сервера");
+                        case "NO_ACTIVATION":
+                            throw new Exception("Id активации не существует");
+                        case "BAD_SERVICE":
+                            throw new Exception("Некорректное наименование сервиса");
+                        case "BAD_STATUS":
+                            throw new Exception("Некорректный статус");
+                        case "BAD_KEY":
+                            throw new Exception("Неверный API-ключ");
+                        case "BAD_ACTION":
+                            throw new Exception("Некорректное действие");
                     }
-                    break;
 
-                case "ACCESS_ACTIVATION":
-                    return "Номер успешно подтверждён";
-                case "STATUS_CANCEL":
-                    throw new Exception("Истёк срок ожидания прихода смс");
-                case "ERROR_SQL":
-                    throw new Exception("Ошибка SQL-сервера");
-                case "NO_ACTIVATION":
-                    throw new Exception("Id активации не существует");
-                case "BAD_SERVICE":
-                    throw new Exception("Некорректное наименование сервиса");
-                case "BAD_STATUS":
-                    throw new Exception("Некорректный статус");
-                case "BAD_KEY":
-                    throw new Exception("Неверный API-ключ");
-                case "BAD_ACTION":
-                    throw new Exception("Некорректное действие");
-            }
-
-            return sms;
-
-                case "sms-reg.com":
-                    break;
+                    return sms;
 
                 case "smsvk.net":
                     break;
@@ -1443,9 +1247,6 @@ namespace KredixLib
 
                     return sms;
 
-                case "sms-reg.com":
-                    break;
-
                 case "smsvk.net":
                     break;
 
@@ -1458,5 +1259,72 @@ namespace KredixLib
             return "OK";
         }
 
+        public string getfinisherror(string ServiceWork, string ApiWork, string Proxy, string Id)
+        {
+            switch (ServiceWork)
+            {
+                case "sms-activate.ru":
+                    string smsstatus = string.Empty;
+                    string sms = string.Empty;
+                    string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                    "&action=setStatus&status=8&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                    switch (setStatus)
+                    {
+                        case "ACCESS_READY":
+                            for (int i = 0; i < 16; i++)
+                            {
+                                smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                                            "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                if (smsstatus.Contains("STATUS_OK"))
+                                {
+                                    sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
+                                    return sms;
+                                }
+                                else
+                                {
+                                    System.Threading.Thread.Sleep(60000);
+                                }
+                            }
+                            break;
+
+                        case "ACCESS_ACTIVATION":
+                            return "Номер успешно подтверждён";
+                        case "ACCESS_CANCEL":
+                            //тут продумать переход к получению нового номера
+                            break;
+                        case "STATUS_CANCEL":
+                            throw new Exception("Истёк срок ожидания прихода смс");
+                        case "ERROR_SQL":
+                            throw new Exception("Ошибка SQL-сервера");
+                        case "NO_ACTIVATION":
+                            throw new Exception("Id активации не существует");
+                        case "BAD_SERVICE":
+                            throw new Exception("Некорректное наименование сервиса");
+                        case "BAD_STATUS":
+                            throw new Exception("Некорректный статус");
+                        case "BAD_KEY":
+                            throw new Exception("Неверный API-ключ");
+                        case "BAD_ACTION":
+                            throw new Exception("Некорректное действие");
+                    }
+
+                    return sms;
+
+                case "smsvk.net":
+                    break;
+
+                case "sms-area.org":
+                    break;
+
+                case "simsms.org":
+                    break;
+            }
+            return "OK";
         }
+    
+
+        }
+
+       
 }
