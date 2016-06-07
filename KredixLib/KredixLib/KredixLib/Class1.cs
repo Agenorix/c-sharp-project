@@ -51,7 +51,7 @@ namespace KredixLib
         List<string> sms_services = new List<string>();
 
         //Функция обработки ошибок simsms.org
-        public void simsmserror (string get)
+        private void simsmserror (string get)
         {
             switch (get)
             {
@@ -93,7 +93,7 @@ namespace KredixLib
             }
             }
 
-        public string getNumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
+        public string getnumber (string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate, 
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
             string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
         {
@@ -1329,12 +1329,55 @@ namespace KredixLib
           return "OK";
         }
 
-        public string getsms (string ServiceWork, string ApiWork, string Proxy, string Number, string Id)
+        //ФУНКЦИЯ ПОЛУЧЕНИЯ SMS КОДА
+        public string getsms (string ServiceWork, string ApiWork, string Proxy, string Id)
         {
             switch (ServiceWork)
             {
                 case "sms-activate.ru":
+                    string smsstatus = string.Empty;
+                    string sms = string.Empty;
+                    string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                    "&action=setStatus&status=1&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                    switch (setStatus)
+                    {
+                        case "ACCESS_READY":
+                            for (int i = 0; i < 16; i++)
+                        {
+                        smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                                    "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                        if (smsstatus.Contains("STATUS_OK"))
+                        {
+                            sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
+                            return sms;
+                        }
+                        else
+                        {
+                            System.Threading.Thread.Sleep(60000);
+                        }
+                    }
                     break;
+
+                case "ACCESS_ACTIVATION":
+                    return "Номер успешно подтверждён";
+                case "STATUS_CANCEL":
+                    throw new Exception("Истёк срок ожидания прихода смс");
+                case "ERROR_SQL":
+                    throw new Exception("Ошибка SQL-сервера");
+                case "NO_ACTIVATION":
+                    throw new Exception("Id активации не существует");
+                case "BAD_SERVICE":
+                    throw new Exception("Некорректное наименование сервиса");
+                case "BAD_STATUS":
+                    throw new Exception("Некорректный статус");
+                case "BAD_KEY":
+                    throw new Exception("Неверный API-ключ");
+                case "BAD_ACTION":
+                    throw new Exception("Некорректное действие");
+            }
+
+            return sms;
 
                 case "sms-reg.com":
                     break;
@@ -1351,5 +1394,69 @@ namespace KredixLib
             return "OK";
         }
 
-    }
+        public string getfinishok(string ServiceWork, string ApiWork, string Proxy, string Id)
+        {
+            switch (ServiceWork)
+            {
+                case "sms-activate.ru":
+                    string smsstatus = string.Empty;
+                    string sms = string.Empty;
+                    string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                    "&action=setStatus&status=6&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                    switch (setStatus)
+                    {
+                        case "ACCESS_READY":
+                            for (int i = 0; i < 16; i++)
+                            {
+                                smsstatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
+                                            "&action=getStatus&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                if (smsstatus.Contains("STATUS_OK"))
+                                {
+                                    sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
+                                    return sms;
+                                }
+                                else
+                                {
+                                    System.Threading.Thread.Sleep(60000);
+                                }
+                            }
+                            break;
+
+                        case "ACCESS_ACTIVATION":
+                            return "Номер успешно подтверждён";
+                        case "STATUS_CANCEL":
+                            throw new Exception("Истёк срок ожидания прихода смс");
+                        case "ERROR_SQL":
+                            throw new Exception("Ошибка SQL-сервера");
+                        case "NO_ACTIVATION":
+                            throw new Exception("Id активации не существует");
+                        case "BAD_SERVICE":
+                            throw new Exception("Некорректное наименование сервиса");
+                        case "BAD_STATUS":
+                            throw new Exception("Некорректный статус");
+                        case "BAD_KEY":
+                            throw new Exception("Неверный API-ключ");
+                        case "BAD_ACTION":
+                            throw new Exception("Некорректное действие");
+                    }
+
+                    return sms;
+
+                case "sms-reg.com":
+                    break;
+
+                case "smsvk.net":
+                    break;
+
+                case "sms-area.org":
+                    break;
+
+                case "simsms.org":
+                    break;
+            }
+            return "OK";
+        }
+
+        }
 }
