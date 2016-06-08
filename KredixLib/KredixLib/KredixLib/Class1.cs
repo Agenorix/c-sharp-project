@@ -49,7 +49,7 @@ namespace KredixLib
         string simsms_countnumber = string.Empty;
         string simsms_service = string.Empty;
         string simsms_service_id = string.Empty;
-        string path = @"C:\textfile.txt";
+        string path = @"c:\TestFile.txt";
 
         //Списки
         List<string> sms_services = new List<string>();
@@ -73,7 +73,7 @@ namespace KredixLib
             //Создаем файл лога
             FileStream file = new FileStream(path, FileMode.Append);
             StreamWriter fnew = new StreamWriter(file, Encoding.UTF8);
-            fnew.WriteLine(DateTime.Now + "  ---> Работаем с сервисом " + Services_Activate);
+            fnew.WriteLine(DateTime.Now + "  ---> начинаем активацию " + Service_Id);
             fnew.Close();
 
 
@@ -84,16 +84,29 @@ namespace KredixLib
                 {
                     case "sms-activate.ru":
                         //[sms-activate.ru] Получаем баланс
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - отправляем запрос на получение баланса");
+                        fnew.Close();
                         string smsactivate_getbalance = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                             "&action=getBalance", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         string smsactivate_balance = System.Text.RegularExpressions.Regex.Replace(smsactivate_getbalance, @".*?:", "");
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - баланс" + smsactivate_balance + " рублей");
+                        fnew.Close();
                         if (Convert.ToInt32(smsactivate_balance) == 0)
                         {
+
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - Денег нет, идем в следующий сервис");
+                            fnew.Close();
                             break;
                         }
 
                         //[sms-activate.ru] Запрашиваем количество свободных номеров
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - запрашиваем количество свободных номеров");
+                        fnew.Close();
                         string getNumbersStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate +
                             "&action=getNumbersStatus", Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -236,38 +249,64 @@ namespace KredixLib
                                 break;
                         }
 
-                        if (Int32.Parse(servicebalance) == 0 || Int32.Parse(price) > Int32.Parse(servicebalance))
+                        if (Int32.Parse(price) > Int32.Parse(servicebalance))
                         {
-                            return "Нулевой баланс в сервисе";
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - На балансе недостаточно средств для дальнейшей работы");
+                            fnew.Close();
+                            return "На балансе недостаточно средств для дальнейшей работы";
                         }
 
 
                         //[sms-activate.ru] Получаем номер и id
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - отправляем запрос на получение номера и id");
+                        fnew.Close();
                         string getnumber = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiKey_smsactivate
                             + "&action=getNumber&service=" + Site_Id + "&operator=" + Operator, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         switch (getnumber)
                         {
                             case "BAD_KEY":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - неверный API ключ");
+                                fnew.Close();
                                 throw new Exception("Неверный API-ключ");
                             case "NO_KEY":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - укажите API ключ");
+                                fnew.Close();
                                 throw new Exception("Укажите API-ключ");
                             case "ERROR_SQL":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - ошибка SQL сервера");
+                                fnew.Close();
                                 throw new Exception("ошибка SQL-сервера");
                             case "WRONG_SERVICE":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - неправильно указан сервис, который нужно активировать");
+                                fnew.Close();
                                 throw new Exception("Неправильно указан сервис, который нужно активировать");
                             default:
                                 //[sms-activate.ru] Получаем номер
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - получаем номер для активации");
+                                fnew.Close();
                                 Number = System.Text.RegularExpressions.Regex.Replace(getnumber, @".*:", "");
 
                                 //[sms-activate.ru] Получаем id
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - получаем id активации");
+                                fnew.Close();
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
 
                                 ServiceWork = "sms-activate.ru";
                                 ApiWork = ApiKey_smsactivate;
 
-
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - номер и id успешно получены");
+                                fnew.Close();
                                 return "Получили номер и id сервиса sms-activate";
                         }
 
@@ -278,6 +317,9 @@ namespace KredixLib
                     case "smsvk.net":
 
                         //[smsvk.net] Проверяем баланс
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - проверяем баланс");
+                        fnew.Close();
                         string getSimStatus = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getSimStatus",
                             Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         for (int qs = 0; qs < 11; qs++)
@@ -297,6 +339,9 @@ namespace KredixLib
                         }
 
                         //[smsvk.net] Запрашиваем количество свободных номеров
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - запрашиваем количество свободных номеров");
+                        fnew.Close();
                         string smsvkgetNumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key=" + ApiKey_smsvk + "&action=getNumbersStatus",
                             Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
                         var smsvkjsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -448,34 +493,58 @@ namespace KredixLib
                         }
 
                         //[smsvk.net] Получаем номер и id
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - отправляем запрос на получение номера и id");
+                        fnew.Close();
                         string smsvk_getnumber = ZennoPoster.HttpGet("http://smsvk.net/stubs/handler_api.php?api_key="
                             + ApiKey_smsvk + "&action=getNumber&service=" + Site_Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         switch (smsvk_getnumber)
                         {
                             case "BAD_KEY":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - неверный API ключ");
+                                fnew.Close();
                                 throw new Exception("Неверный API-ключ");
 
                             case "NO_KEY":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - укажите API ключ");
+                                fnew.Close();
                                 throw new Exception("Укажите API-ключ");
 
                             case "ERROR_SQL":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - ошибка SQL сервера");
+                                fnew.Close();
                                 throw new Exception("ошибка SQL-сервера");
 
                             case "WRONG_SERVICE":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - неправильно указан сервис, который нужно активировать");
+                                fnew.Close();
                                 throw new Exception("Неправильно указан сервис, который нужно активировать");
 
                             default:
                                 //[sms-activate.ru] Получаем номер
                                 Number = System.Text.RegularExpressions.Regex.Replace(smsvk_getnumber, @".*:", "");
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - получаем номер");
+                                fnew.Close();
 
                                 //[sms-activate.ru] Получаем id
                                 string idtemp = System.Text.RegularExpressions.Regex.Replace(smsvk_getnumber, @"ACCESS.*?:", "");
                                 Id = System.Text.RegularExpressions.Regex.Replace(idtemp, @":7.*", "");
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - получаем id");
+                                fnew.Close();
 
                                 ServiceWork = "smsvk.net";
                                 ApiWork = ApiKey_smsvk;
 
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - номер и id успешно получены");
+                                fnew.Close();
                                 return "Получили номер и id сервиса smsvk.net";
                         }
 
@@ -646,7 +715,7 @@ namespace KredixLib
                     case "simsms.org":
                         //[SIMSMS.ORG] ПОЛУЧАЕМ НОМЕР
                         fnew = new System.IO.StreamWriter(path, true);
-                        fnew.WriteLine(DateTime.Now + "  ---> Начинаем получение номера в сервисе " + Services_Activate);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - начинаем получение номера");
                         fnew.Close();
                         //[simsms.org] Составляем список сервисов
                         switch (Service_Id)
@@ -795,7 +864,7 @@ namespace KredixLib
 
                         //[simsms.org] Получаем баланс
                         fnew = new System.IO.StreamWriter(path, true);
-                        fnew.WriteLine(DateTime.Now + "  ---> Получаем баланс сервиса " + Services_Activate);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - начинаем получение баланса");
                         fnew.Close();
                         string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms, Proxy,
@@ -806,16 +875,34 @@ namespace KredixLib
                         switch (simsms_getbalance)
                         {
                             case "API KEY не получен!":
-                                throw new Exception("Введен не верный API KEY");
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - введен неверный API KEY");
+                                fnew.Close();
+                                throw new Exception("Введен неверный API KEY");
                             case "Недостаточно средств!":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - недостаточно средств для выполнения операции");
+                                fnew.Close();
                                 throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
                             case "Превышено количество попыток!":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - зажайте больший интервал между вызовами к серверу API");
+                                fnew.Close();
                                 throw new Exception("Задайте больший интервал между вызовами к серверу API");
                             case "Произошла неизвестная ошибка.":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - попробуйте повторить запрос позже");
+                                fnew.Close();
                                 throw new Exception("Попробуйте повторить запрос позже");
                             case "Неверный запрос.":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - проверьте синтаксис запроса и список используемых параметров");
+                                fnew.Close();
                                 throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
                             case "Произошла внутренняя ошибка сервера":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - произошла внутреняя ошибка сервера");
+                                fnew.Close();
                                 throw new Exception("Попробуйте повторить запрос позже.");
                             default:
                                 if (simsms_getbalance.Contains("null"))
@@ -832,10 +919,19 @@ namespace KredixLib
                                     switch (response)
                                     {
                                         case "5":
+                                            fnew = new System.IO.StreamWriter(path, true);
+                                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - превышено количество запросов в минуту");
+                                            fnew.Close();
                                             throw new Exception("Превышено количество запросов в минуту");
                                         case "6":
+                                            fnew = new System.IO.StreamWriter(path, true);
+                                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - бан на 10 минут из-за отрицательной кармы");
+                                            fnew.Close();
                                             throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
                                         case "7":
+                                            fnew = new System.IO.StreamWriter(path, true);
+                                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - превышено количество одновременных потоков");
+                                            fnew.Close();
                                             throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
                                     }
                                 }
@@ -848,6 +944,9 @@ namespace KredixLib
                             Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
                             string simsms_response = simsms_data["response"].ToString();
                             string simsms_balance = simsms_data["balance"].ToString();
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - баланс сервиса равен " + simsms_balance);
+                            fnew.Close();
                         }
 
                         if (simsms_getbalance.Contains("error"))
@@ -860,8 +959,9 @@ namespace KredixLib
                         }
 
                         //[simsms.org] //Получаем количество свободных номеров
+
                         fnew = new System.IO.StreamWriter(path, true);
-                        fnew.WriteLine(DateTime.Now + "  ---> Получаем количество свободных номеров в сервисе " + Services_Activate);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - получаем количество свободных номеров");
                         fnew.Close();
                         string simsms_numbercount = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_count&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&service_id=" + simsms_service_id, Proxy,
@@ -1102,16 +1202,13 @@ namespace KredixLib
                         }
 
                         //[SIMSMS.ORG] Получаем номер
+
                         fnew = new System.IO.StreamWriter(path, true);
-                        fnew.WriteLine(DateTime.Now + "  ---> Получаем номер в сервисе " + Services_Activate);
+                        fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - начинаем получение номера");
                         fnew.Close();
                         string simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
                             "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-
-                        fnew = new System.IO.StreamWriter(path, true);
-                        fnew.WriteLine(DateTime.Now + "  ---> simsms_getnumber равен  " + simsms_getnumber);
-                        fnew.Close();
 
                         for (int sims = 0; sims < 10; sims++)
                         {
@@ -1133,13 +1230,13 @@ namespace KredixLib
                                     ServiceWork = "simsms.org";
                                     ApiWork = ApiKey_simsms;
                                     fnew = new System.IO.StreamWriter(path, true);
-                                    fnew.WriteLine(DateTime.Now + "  ---> Номер получен в  " + Services_Activate);
+                                    fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - номер и id успешно получены");
                                     fnew.Close();
                                     return "ПОлучили номер в сервисе simsms.org";
 
                                 case "2":
                                     fnew = new System.IO.StreamWriter(path, true);
-                                    fnew.WriteLine(DateTime.Now + "  ---> Все номера заняты, ждем 30 секунд  " + Services_Activate);
+                                    fnew.WriteLine(DateTime.Now + "  ---> [ " + service + " ] - все номера заняты, ждем 30 секунд");
                                     fnew.Close();
                                     System.Threading.Thread.Sleep(30000);
                                     simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
@@ -1203,9 +1300,12 @@ namespace KredixLib
         //ФУНКЦИЯ ПОЛУЧЕНИЯ SMS КОДА
         public string getsms(string ServiceWork, string ApiWork, string Proxy, string Id, string Service_Id)
         {
-            switch (ServiceWork)
+          switch (ServiceWork)
             {
                 case "sms-activate.ru":
+                    StreamWriter fnew = new System.IO.StreamWriter(path, true);
+                    fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - отправляем запрос на получение смс кода");
+                    fnew.Close();
                     string smsstatus = string.Empty;
                     string sms = string.Empty;
                     string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
@@ -1221,6 +1321,9 @@ namespace KredixLib
                                 if (smsstatus.Contains("STATUS_OK"))
                                 {
                                     sms = System.Text.RegularExpressions.Regex.Replace(smsstatus, @".*OK:", "");
+                                    fnew = new System.IO.StreamWriter(path, true);
+                                    fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - код получен");
+                                    fnew.Close();
                                     return sms;
                                 }
                                 else
@@ -1231,8 +1334,14 @@ namespace KredixLib
                             break;
 
                         case "ACCESS_ACTIVATION":
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - номер успешно подтвержден");
+                            fnew.Close();
                             return "Номер успешно подтверждён";
                         case "STATUS_CANCEL":
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - истек срок ожидания прихода смс");
+                            fnew.Close();
                             throw new Exception("Истёк срок ожидания прихода смс");
                         case "ERROR_SQL":
                             throw new Exception("Ошибка SQL-сервера");
@@ -1257,7 +1366,7 @@ namespace KredixLib
                     break;
 
                 case "simsms.org":
-                    StreamWriter fnew = new System.IO.StreamWriter(path, true);
+                    fnew = new System.IO.StreamWriter(path, true);
                     fnew.WriteLine(DateTime.Now + "  ---> Начинаем получение смс кода " + ServiceWork);
                     fnew.Close();
                     switch (Service_Id)
@@ -1484,9 +1593,13 @@ namespace KredixLib
 
         public string getfinishok(string ServiceWork, string ApiWork, string Proxy, string Id)
         {
+
             switch (ServiceWork)
             {
                 case "sms-activate.ru":
+                    StreamWriter fnew = new System.IO.StreamWriter(path, true);
+                    fnew.WriteLine(DateTime.Now + "  ---> [sms - activate.ru] - завершаем активацию номера");
+                    fnew.Close();
                     string smsstatus = string.Empty;
                     string sms = string.Empty;
                     string setStatus = ZennoPoster.HttpGet("http://sms-activate.ru/stubs/handler_api.php?api_key=" + ApiWork +
@@ -1814,5 +1927,5 @@ namespace KredixLib
             return "param";
         }
 
-    }      
+    }
 }
