@@ -54,9 +54,9 @@ namespace KredixLib
         //Списки
         List<string> sms_services = new List<string>();
 
-         public string getnumber(string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate,
-            string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
-            string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
+        public string getnumber(string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate,
+           string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
+           string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
         {
             Number = string.Empty;
             Id = string.Empty;
@@ -271,7 +271,7 @@ namespace KredixLib
                                 return "Получили номер и id сервиса sms-activate";
                         }
 
-                     
+
 
                     //[SMSVK.NET] ПОЛУЧАЕМ НОМЕР
 
@@ -1257,8 +1257,6 @@ namespace KredixLib
                     break;
 
                 case "simsms.org":
-                    //FileStream file = new FileStream(path, FileMode.Append);
-                   // StreamWriter fnew = new StreamWriter(file, Encoding.UTF8);
                     StreamWriter fnew = new System.IO.StreamWriter(path, true);
                     fnew.WriteLine(DateTime.Now + "  ---> Начинаем получение смс кода " + ServiceWork);
                     fnew.Close();
@@ -1478,9 +1476,9 @@ namespace KredixLib
                                 break;
                         }
                     }
-                        return simsms_getsms;
+                    return simsms_getsms;
 
-             }
+            }
             return "OK";
         }
 
@@ -1539,14 +1537,11 @@ namespace KredixLib
                 case "sms-area.org":
                     break;
 
-                case "simsms.org":
-                    break;
-
             }
             return "OK";
         }
 
-        public string getfinisherror(string ServiceWork, string ApiWork, string Proxy, string Id)
+        public string getfinisherror(string ServiceWork, string ApiWork, string Proxy, string Id, string Service_Id)
         {
             switch (ServiceWork)
             {
@@ -1605,13 +1600,219 @@ namespace KredixLib
                     break;
 
                 case "simsms.org":
-                    break;
+                    switch (Service_Id)
+                    {
+                        case "вконтакте":
+                            simsms_service = "opt4";
+                            simsms_service_id = "vk";
+                            break;
+
+                        case "Мамба":
+                            simsms_service = "opt7";
+                            simsms_service_id = "mamba";
+                            break;
+
+                        case "одноклассники":
+                            simsms_service = "opt5";
+                            simsms_service_id = "ok";
+                            break;
+
+                        case "4game":
+                            simsms_service = "opt0";
+                            simsms_service_id = "4game";
+                            break;
+
+                        case "gmail":
+                            simsms_service = "opt1";
+                            simsms_service_id = "gmail";
+                            break;
+
+                        case "facebook":
+                            simsms_service = "opt2";
+                            simsms_service_id = "fb";
+                            break;
+
+                        case "spacesru":
+                            simsms_service = "opt3";
+                            simsms_service_id = "spaces";
+                            break;
+
+                        case "viber":
+                            simsms_service = "opt11";
+                            simsms_service_id = "viber";
+                            break;
+
+                        case "фотострана":
+                            simsms_service = "opt13";
+                            simsms_service_id = "fotostrana";
+                            break;
+
+                        case "microsoft":
+                            simsms_service = "opt15";
+                            simsms_service_id = "ms";
+                            break;
+
+                        case "instagram":
+                            simsms_service = "opt16";
+                            simsms_service_id = "instagram";
+                            break;
+
+                        case "qiwi":
+                            simsms_service = "opt18";
+                            simsms_service_id = "qiwi";
+                            break;
+
+                        case "whatsapp":
+                            simsms_service = "opt20";
+                            simsms_service_id = "whatsapp";
+                            break;
+
+                        case "webtransfer":
+                            simsms_service = "opt21";
+                            simsms_service_id = "webtransfer";
+                            break;
+
+                        case "seosprint":
+                            simsms_service = "opt22";
+                            simsms_service_id = "seosprint";
+                            break;
+
+                        case "яндекс":
+                            simsms_service = "opt23";
+                            simsms_service_id = "ya";
+                            break;
+
+                        case "webmoney":
+                            simsms_service = "opt24";
+                            simsms_service_id = "webmoney";
+                            break;
+
+                        case "nasimke":
+                            simsms_service = "opt25";
+                            simsms_service_id = "nasimke";
+                            break;
+
+                        case "comnu":
+                            simsms_service = "opt26";
+                            simsms_service_id = "com";
+                            break;
+
+                        case "dodopizzaru":
+                            simsms_service = "opt27";
+                            simsms_service_id = "dodopizza";
+                            break;
+
+                        case "taborru":
+                            simsms_service = "opt28";
+                            simsms_service_id = "tabor";
+                            break;
+
+                        case "telegram":
+                            simsms_service = "opt29";
+                            simsms_service_id = "telegram";
+                            break;
+
+                        case "простоквашино":
+                            simsms_service = "opt30";
+                            simsms_service_id = "prostock";
+                            break;
+
+                        case "другвокруг":
+                            simsms_service = "opt31";
+                            simsms_service_id = "drugvokrug";
+                            break;
+
+                        case "drom":
+                            simsms_service = "opt32";
+                            simsms_service_id = "drom";
+                            break;
+
+                        case "mailru":
+                            simsms_service = "opt33";
+                            simsms_service_id = "mail";
+                            break;
+
+                        case "twitter":
+                            simsms_service = "opt41";
+                            simsms_service_id = "twitter";
+                            break;
+
+                        case "avito":
+                            simsms_service = "opt59";
+                            simsms_service_id = "avito";
+                            break;
+
+                    }
+                    StreamWriter fnew = new System.IO.StreamWriter(path, true);
+                    fnew.WriteLine(DateTime.Now + "  ---> [ " + ServiceWork + " ] Номер уже использован. В бан его :) ");
+                    fnew.Close();
+                    string simsms_getban = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_ban&service=" + simsms_service +
+                        "&apikey=" + ApiKey_simsms + "&id=" + Id, Proxy, "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                    Regex regex_ban = new Regex("(?<={\"response\":\").*(?=\",\"number\":\")");
+                    Match match_ban = regex_ban.Match(simsms_getban);
+                    string response_ban = Convert.ToString(match_ban);
+
+                    switch (response_ban)
+                    {
+                        case "1":
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> Номер успешно забанен в сервисе  " + ServiceWork);
+                            fnew.Close();
+                            return "Забанили номер в сервисе simsms.org";
+
+                        case "2":
+                            fnew = new System.IO.StreamWriter(path, true);
+                            fnew.WriteLine(DateTime.Now + "  ---> Какая то ошибка при бане номера в сервисе  " + ServiceWork);
+                            fnew.Close();
+                            break;
+
+                        case "error":
+                            switch (simsms_getban)
+                            {
+                                case "API KEY не получен!":
+                                    throw new Exception("Введен не верный API KEY");
+                                case "Недостаточно средств!":
+                                    throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+                                case "Превышено количество попыток!":
+                                    throw new Exception("Задайте больший интервал между вызовами к серверу API");
+                                case "Произошла неизвестная ошибка.":
+                                    throw new Exception("Попробуйте повторить запрос позже");
+                                case "Неверный запрос.":
+                                    throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+                                case "Произошла внутренняя ошибка сервера":
+                                    throw new Exception("Попробуйте повторить запрос позже.");
+                                default:
+                                    if (simsms_getban.Contains("null"))
+                                    {
+                                        var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                        Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getban);
+                                        string response = simsms_data["response"].ToString();
+                                        string number = simsms_data["number"].ToString();
+                                        string id = simsms_data["id"].ToString();
+                                        string text = simsms_data["text"].ToString();
+                                        string extra = simsms_data["extra"].ToString();
+                                        string qqsms = simsms_data["sms"].ToString();
+
+                                        switch (response)
+                                        {
+                                            case "5":
+                                                throw new Exception("Превышено количество запросов в минуту");
+                                            case "6":
+                                                throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                                            case "7":
+                                                throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                                        }
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                    return "OK";
             }
-            return "OK";
-        }
-    
 
+            return "param";
         }
 
-       
+    }      
 }
