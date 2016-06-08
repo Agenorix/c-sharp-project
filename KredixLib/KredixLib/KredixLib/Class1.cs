@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Data;
@@ -46,54 +47,14 @@ namespace KredixLib
         private string ApiWork = string.Empty;
         private string smsvk_balance = string.Empty;
         string simsms_countnumber = string.Empty;
+        string simsms_service = string.Empty;
+        string simsms_service_id = string.Empty;
+        string path = @"C:\textfile.txt";
 
         //Списки
         List<string> sms_services = new List<string>();
 
-        //Функция обработки ошибок simsms.org
-        private void simsmserror(string get)
-        {
-            switch (get)
-            {
-                case "API KEY не получен!":
-                    throw new Exception("Введен не верный API KEY");
-                case "Недостаточно средств!":
-                    throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
-                case "Превышено количество попыток!":
-                    throw new Exception("Задайте больший интервал между вызовами к серверу API");
-                case "Произошла неизвестная ошибка.":
-                    throw new Exception("Попробуйте повторить запрос позже");
-                case "Неверный запрос.":
-                    throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
-                case "Произошла внутренняя ошибка сервера":
-                    throw new Exception("Попробуйте повторить запрос позже.");
-                default:
-                    if (get.Contains("null"))
-                    {
-                        var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
-                        Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(get);
-                        string response = simsms_data["response"].ToString();
-                        string number = simsms_data["number"].ToString();
-                        string id = simsms_data["id"].ToString();
-                        string text = simsms_data["text"].ToString();
-                        string extra = simsms_data["extra"].ToString();
-                        string sms = simsms_data["sms"].ToString();
-
-                        switch (response)
-                        {
-                            case "5":
-                                throw new Exception("Превышено количество запросов в минуту");
-                            case "6":
-                                throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
-                            case "7":
-                                throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
-                        }
-                    }
-                    break;
-            }
-        }
-
-        public string getnumber(string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate,
+         public string getnumber(string Services_Activate, string Service_Id, string Operator, string Proxy, string ApiKey_smsreg, string ApiKey_smsactivate,
             string ApiKey_simsms, string ApiKey_smsvk, string ApiKey_smsarea,
             string ApiKey_onlinesim, string count, out string Number, out string Id, out string ServiceWork, out string ApiWork)
         {
@@ -108,6 +69,13 @@ namespace KredixLib
             string response_sm = string.Empty;
             string simsms_service_id = string.Empty;
             string[] arrServices = Services_Activate.Split(','); //Поместили списко сервисов активации в массов
+
+            //Создаем файл лога
+            FileStream file = new FileStream(path, FileMode.Append);
+            StreamWriter fnew = new StreamWriter(file, Encoding.UTF8);
+            fnew.WriteLine(DateTime.Now + "  ---> Работаем с сервисом " + Services_Activate);
+            fnew.Close();
+
 
             for (int i = 0; i < arrServices.Length; i++)
             {
@@ -677,7 +645,9 @@ namespace KredixLib
 
                     case "simsms.org":
                         //[SIMSMS.ORG] ПОЛУЧАЕМ НОМЕР
-
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> Начинаем получение номера в сервисе " + Services_Activate);
+                        fnew.Close();
                         //[simsms.org] Составляем список сервисов
                         switch (Service_Id)
                         {
@@ -824,13 +794,53 @@ namespace KredixLib
                         }
 
                         //[simsms.org] Получаем баланс
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> Получаем баланс сервиса " + Services_Activate);
+                        fnew.Close();
                         string simsms_getbalance = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_balance&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms, Proxy,
                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
 
                         System.Threading.Thread.Sleep(3000);
 
-                        simsmserror(simsms_getbalance);
+                        switch (simsms_getbalance)
+                        {
+                            case "API KEY не получен!":
+                                throw new Exception("Введен не верный API KEY");
+                            case "Недостаточно средств!":
+                                throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+                            case "Превышено количество попыток!":
+                                throw new Exception("Задайте больший интервал между вызовами к серверу API");
+                            case "Произошла неизвестная ошибка.":
+                                throw new Exception("Попробуйте повторить запрос позже");
+                            case "Неверный запрос.":
+                                throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+                            case "Произошла внутренняя ошибка сервера":
+                                throw new Exception("Попробуйте повторить запрос позже.");
+                            default:
+                                if (simsms_getbalance.Contains("null"))
+                                {
+                                    var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                    Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getbalance);
+                                    string response = simsms_data["response"].ToString();
+                                    string number = simsms_data["number"].ToString();
+                                    string id = simsms_data["id"].ToString();
+                                    string text = simsms_data["text"].ToString();
+                                    string extra = simsms_data["extra"].ToString();
+                                    string sms = simsms_data["sms"].ToString();
+
+                                    switch (response)
+                                    {
+                                        case "5":
+                                            throw new Exception("Превышено количество запросов в минуту");
+                                        case "6":
+                                            throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                                        case "7":
+                                            throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                                    }
+                                }
+                                break;
+                        }
 
                         if (simsms_getbalance.Contains("balance"))
                         {
@@ -850,6 +860,9 @@ namespace KredixLib
                         }
 
                         //[simsms.org] //Получаем количество свободных номеров
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> Получаем количество свободных номеров в сервисе " + Services_Activate);
+                        fnew.Close();
                         string simsms_numbercount = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_count&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&service_id=" + simsms_service_id, Proxy,
                    "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
@@ -1089,9 +1102,16 @@ namespace KredixLib
                         }
 
                         //[SIMSMS.ORG] Получаем номер
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> Получаем номер в сервисе " + Services_Activate);
+                        fnew.Close();
                         string simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
                             "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
                             "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+
+                        fnew = new System.IO.StreamWriter(path, true);
+                        fnew.WriteLine(DateTime.Now + "  ---> simsms_getnumber равен  " + simsms_getnumber);
+                        fnew.Close();
 
                         for (int sims = 0; sims < 10; sims++)
                         {
@@ -1111,19 +1131,63 @@ namespace KredixLib
                                     Id = Convert.ToString(match_id);
 
                                     ServiceWork = "simsms.org";
-                                    ApiKey_smsarea = ApiKey_simsms;
-
+                                    ApiWork = ApiKey_simsms;
+                                    fnew = new System.IO.StreamWriter(path, true);
+                                    fnew.WriteLine(DateTime.Now + "  ---> Номер получен в  " + Services_Activate);
+                                    fnew.Close();
                                     return "ПОлучили номер в сервисе simsms.org";
 
                                 case "2":
+                                    fnew = new System.IO.StreamWriter(path, true);
+                                    fnew.WriteLine(DateTime.Now + "  ---> Все номера заняты, ждем 30 секунд  " + Services_Activate);
+                                    fnew.Close();
                                     System.Threading.Thread.Sleep(30000);
                                     simsms_getnumber = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_number&service=" + simsms_service +
                                         "&apikey=" + ApiKey_simsms + "&country=ru&id=1", Proxy,
                                        "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
-                                    break;
+
+                                    //break;
+                                    continue;
 
                                 case "error":
-                                    simsmserror(simsms_getnumber);
+                                    switch (simsms_getnumber)
+                                    {
+                                        case "API KEY не получен!":
+                                            throw new Exception("Введен не верный API KEY");
+                                        case "Недостаточно средств!":
+                                            throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+                                        case "Превышено количество попыток!":
+                                            throw new Exception("Задайте больший интервал между вызовами к серверу API");
+                                        case "Произошла неизвестная ошибка.":
+                                            throw new Exception("Попробуйте повторить запрос позже");
+                                        case "Неверный запрос.":
+                                            throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+                                        case "Произошла внутренняя ошибка сервера":
+                                            throw new Exception("Попробуйте повторить запрос позже.");
+                                        default:
+                                            if (simsms_getnumber.Contains("null"))
+                                            {
+                                                var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                                Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getnumber);
+                                                string response = simsms_data["response"].ToString();
+                                                string number = simsms_data["number"].ToString();
+                                                string id = simsms_data["id"].ToString();
+                                                string text = simsms_data["text"].ToString();
+                                                string extra = simsms_data["extra"].ToString();
+                                                string sms = simsms_data["sms"].ToString();
+
+                                                switch (response)
+                                                {
+                                                    case "5":
+                                                        throw new Exception("Превышено количество запросов в минуту");
+                                                    case "6":
+                                                        throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                                                    case "7":
+                                                        throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                                                }
+                                            }
+                                            break;
+                                    }
                                     break;
                             }
 
@@ -1137,7 +1201,7 @@ namespace KredixLib
         }
 
         //ФУНКЦИЯ ПОЛУЧЕНИЯ SMS КОДА
-        public string getsms(string ServiceWork, string ApiWork, string Proxy, string Id)
+        public string getsms(string ServiceWork, string ApiWork, string Proxy, string Id, string Service_Id)
         {
             switch (ServiceWork)
             {
@@ -1193,8 +1257,230 @@ namespace KredixLib
                     break;
 
                 case "simsms.org":
-                    break;
-            }
+                    //FileStream file = new FileStream(path, FileMode.Append);
+                   // StreamWriter fnew = new StreamWriter(file, Encoding.UTF8);
+                    StreamWriter fnew = new System.IO.StreamWriter(path, true);
+                    fnew.WriteLine(DateTime.Now + "  ---> Начинаем получение смс кода " + ServiceWork);
+                    fnew.Close();
+                    switch (Service_Id)
+                    {
+                        case "вконтакте":
+                            simsms_service = "opt4";
+                            simsms_service_id = "vk";
+                            break;
+
+                        case "Мамба":
+                            simsms_service = "opt7";
+                            simsms_service_id = "mamba";
+                            break;
+
+                        case "одноклассники":
+                            simsms_service = "opt5";
+                            simsms_service_id = "ok";
+                            break;
+
+                        case "4game":
+                            simsms_service = "opt0";
+                            simsms_service_id = "4game";
+                            break;
+
+                        case "gmail":
+                            simsms_service = "opt1";
+                            simsms_service_id = "gmail";
+                            break;
+
+                        case "facebook":
+                            simsms_service = "opt2";
+                            simsms_service_id = "fb";
+                            break;
+
+                        case "spacesru":
+                            simsms_service = "opt3";
+                            simsms_service_id = "spaces";
+                            break;
+
+                        case "viber":
+                            simsms_service = "opt11";
+                            simsms_service_id = "viber";
+                            break;
+
+                        case "фотострана":
+                            simsms_service = "opt13";
+                            simsms_service_id = "fotostrana";
+                            break;
+
+                        case "microsoft":
+                            simsms_service = "opt15";
+                            simsms_service_id = "ms";
+                            break;
+
+                        case "instagram":
+                            simsms_service = "opt16";
+                            simsms_service_id = "instagram";
+                            break;
+
+                        case "qiwi":
+                            simsms_service = "opt18";
+                            simsms_service_id = "qiwi";
+                            break;
+
+                        case "whatsapp":
+                            simsms_service = "opt20";
+                            simsms_service_id = "whatsapp";
+                            break;
+
+                        case "webtransfer":
+                            simsms_service = "opt21";
+                            simsms_service_id = "webtransfer";
+                            break;
+
+                        case "seosprint":
+                            simsms_service = "opt22";
+                            simsms_service_id = "seosprint";
+                            break;
+
+                        case "яндекс":
+                            simsms_service = "opt23";
+                            simsms_service_id = "ya";
+                            break;
+
+                        case "webmoney":
+                            simsms_service = "opt24";
+                            simsms_service_id = "webmoney";
+                            break;
+
+                        case "nasimke":
+                            simsms_service = "opt25";
+                            simsms_service_id = "nasimke";
+                            break;
+
+                        case "comnu":
+                            simsms_service = "opt26";
+                            simsms_service_id = "com";
+                            break;
+
+                        case "dodopizzaru":
+                            simsms_service = "opt27";
+                            simsms_service_id = "dodopizza";
+                            break;
+
+                        case "taborru":
+                            simsms_service = "opt28";
+                            simsms_service_id = "tabor";
+                            break;
+
+                        case "telegram":
+                            simsms_service = "opt29";
+                            simsms_service_id = "telegram";
+                            break;
+
+                        case "простоквашино":
+                            simsms_service = "opt30";
+                            simsms_service_id = "prostock";
+                            break;
+
+                        case "другвокруг":
+                            simsms_service = "opt31";
+                            simsms_service_id = "drugvokrug";
+                            break;
+
+                        case "drom":
+                            simsms_service = "opt32";
+                            simsms_service_id = "drom";
+                            break;
+
+                        case "mailru":
+                            simsms_service = "opt33";
+                            simsms_service_id = "mail";
+                            break;
+
+                        case "twitter":
+                            simsms_service = "opt41";
+                            simsms_service_id = "twitter";
+                            break;
+
+                        case "avito":
+                            simsms_service = "opt59";
+                            simsms_service_id = "avito";
+                            break;
+
+                    }
+                    fnew = new System.IO.StreamWriter(path, true);
+                    fnew.WriteLine(DateTime.Now + "  ---> Отправляем запрос на получение смс кода " + ServiceWork);
+                    fnew.Close();
+                    string simsms_getsms = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_sms&service=" + simsms_service + "&country=ru&id=" + Id + "&apikey=" + ApiWork, Proxy,
+                                 "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                    for (int sims = 0; sims < 10; sims++)
+                    {
+                        Regex regex_response = new Regex("(?<={\"response\":\").*(?=\",\"number\":\")");
+                        Match match_response = regex_response.Match(simsms_getsms);
+                        string simsmsresp = Convert.ToString(match_response);
+
+                        switch (simsmsresp)
+                        {
+                            case "1":
+                                Regex regex_simsms_response = new Regex("(?<=\"sms\":\").*(?=\",\"balanceOnPhone)");
+                                Match match_simsms_response = regex_simsms_response.Match(simsms_getsms);
+                                string simsms_smscode = Convert.ToString(match_simsms_response);
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> Код смс получен " + ServiceWork);
+                                fnew.Close();
+                                return simsms_smscode;
+
+                            case "2":
+                                fnew = new System.IO.StreamWriter(path, true);
+                                fnew.WriteLine(DateTime.Now + "  ---> Код в пути, ждем 30 секунд " + ServiceWork);
+                                fnew.Close();
+                                System.Threading.Thread.Sleep(30000);
+                                simsms_getsms = ZennoPoster.HttpGet("http://simsms.org/priemnik.php?metod=get_sms&service=" + simsms_service + "&country=ru&id=" + Id + "&apikey=" + ApiWork, Proxy,
+                                "UTF-8", ZennoLab.InterfacesLibrary.Enums.Http.ResponceType.BodyOnly);
+                                continue;
+
+                            case "error":
+                                switch (simsms_getsms)
+                                {
+                                    case "API KEY не получен!":
+                                        throw new Exception("Введен не верный API KEY");
+                                    case "Недостаточно средств!":
+                                        throw new Exception("Недостаточно средств для выполнения операции. Пополните Ваш кошелек");
+                                    case "Превышено количество попыток!":
+                                        throw new Exception("Задайте больший интервал между вызовами к серверу API");
+                                    case "Произошла неизвестная ошибка.":
+                                        throw new Exception("Попробуйте повторить запрос позже");
+                                    case "Неверный запрос.":
+                                        throw new Exception("Проверьте синтаксис запроса и список используемых параметров");
+                                    case "Произошла внутренняя ошибка сервера":
+                                        throw new Exception("Попробуйте повторить запрос позже.");
+                                    default:
+                                        if (simsms_getsms.Contains("null"))
+                                        {
+                                            var simsms_jsonser = new System.Web.Script.Serialization.JavaScriptSerializer();
+                                            Dictionary<string, object> simsms_data = simsms_jsonser.Deserialize<Dictionary<string, object>>(simsms_getsms);
+                                            string response = simsms_data["response"].ToString();
+                                            string number = simsms_data["number"].ToString();
+                                            string id = simsms_data["id"].ToString();
+                                            string text = simsms_data["text"].ToString();
+                                            string extra = simsms_data["extra"].ToString();
+                                            string sssms = simsms_data["sms"].ToString();
+
+                                            switch (response)
+                                            {
+                                                case "5":
+                                                    throw new Exception("Превышено количество запросов в минуту");
+                                                case "6":
+                                                    throw new Exception("Вы забанены на 10 минут, т.к. набрали отрицательную карму");
+                                                case "7":
+                                                    throw new Exception("Превышено количество одновременных потоков. Дождитесь смс от предыдущих заказов");
+                                            }
+                                        }
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+                        return simsms_getsms;
+
+             }
             return "OK";
         }
 
@@ -1255,6 +1541,7 @@ namespace KredixLib
 
                 case "simsms.org":
                     break;
+
             }
             return "OK";
         }
