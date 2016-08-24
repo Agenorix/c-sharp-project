@@ -16,7 +16,8 @@ using ZennoLab.InterfacesLibrary.ProjectModel.Enums;
 using ZennoLab.Macros;
 using Global.ZennoExtensions;
 using ZennoLab.Emulation;
-using System.Diagnostics;
+using System.Diagnostics;
+
 
 namespace KredixLabs
 {
@@ -1515,4 +1516,62 @@ namespace KredixLabs
         }
 
     }
+
+        public class Counters
+        {
+            public int albums { get; set; }
+            public int videos { get; set; }
+            public int audios { get; set; }
+            public int notes { get; set; }
+            public int photos { get; set; }
+            public int groups { get; set; }
+            public int gifts { get; set; }
+            public int friends { get; set; }
+            public int online_friends { get; set; }
+            public int mutual_friends { get; set; }
+            public int user_photos { get; set; }
+            public int user_videos { get; set; }
+            public int followers { get; set; }
+            public int subscriptions { get; set; }
+            public int pages { get; set; }
+        }
+
+        public class Response
+        {
+            public int uid { get; set; }
+            public string first_name { get; set; }
+            public string last_name { get; set; }
+            public string maiden_name { get; set; }
+            public string status { get; set; }
+            public Counters counters { get; set; }
+            public string interests { get; set; }
+            public string movies { get; set; }
+            public string tv { get; set; }
+            public string books { get; set; }
+            public string about { get; set; }
+            public string quotes { get; set; }
+            public int pid { get; set; }
+            public int aid { get; set; }
+            public int owner_id { get; set; }
+            public string src { get; set; }
+            public string src_big { get; set; }
+            public string src_small { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+            public string text { get; set; }
+            public int created { get; set; }
+            public int post_id { get; set; }
+            public string src_xbig { get; set; }
+            public double? lat { get; set; }
+            public double? @long { get; set; }
+            public string src_xxbig { get; set; }
+            public string src_xxxbig { get; set; }
+            public int id { get; set; }
+    }
+
+        public class RootObject
+        {
+            public List<Response> response { get; set; }
+        }
+
 }
